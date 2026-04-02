@@ -1,0 +1,183 @@
+.custom-background {
+  padding: 0 16px;
+}
+
+.custom-table table {
+  width: 100%;
+}
+
+.custom-table thead tr {
+  background: #f1f1f1;
+  padding-bottom: 14px !important;
+  padding-top: 14px !important;
+  vertical-align: bottom;
+}
+
+.custom-table thead tr th {
+  white-space: nowrap !important;
+}
+
+.custom-table tbody tr:nth-child(2n+1) {
+  background: var(--very-light-gray);
+}
+
+.custom-table .thead tr {
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+// .custom-table tbody > tr:hover {
+//   background: #ebf3f9;
+// }
+
+.custom-table thead > tr > td {
+  background: transparent;
+  background: var(--white);
+  background: -moz-linear-gradient(top, var(--white) 0%, #f6f6f6 47%, #ededed 100%);
+  background:
+    -webkit-gradient(
+      left top,
+      left bottom,
+      color-stop(0%, var(--white)),
+      color-stop(47%, #f6f6f6),
+      color-stop(100%, #ededed)
+    );
+  background: -webkit-linear-gradient(top, var(--white) 0%, #f6f6f6 47%, #ededed 100%);
+  background: -o-linear-gradient(top, var(--white) 0%, #f6f6f6 47%, #ededed 100%);
+  background: -ms-linear-gradient(top, var(--white) 0%, #f6f6f6 47%, #ededed 100%);
+  background: linear-gradient(to bottom, var(--white) 0%, #f6f6f6 47%, #ededed 100%);
+  border-bottom: 0;
+  color: #000;
+  font-weight: bold;
+  overflow-wrap: break-word;
+  padding: 10px 8px;
+  position: relative;
+  text-align: left;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
+}
+
+.table td {
+  color: #526273;
+}
+
+.table tr td a:hover {
+  color: #428bca;
+  text-decoration: underline;
+}
+
+.custom-table tbody > tr > td {
+  border-top: 1px solid var(--light-gray);
+  vertical-align: top;
+}
+
+.custom-table tbody > tr > td {
+  background: transparent;
+  border-bottom: 0;
+  color: #526273;
+  font-size: 12px;
+  overflow-wrap: break-word;
+  padding: 8px !important;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+.custom-card-details .action {
+  float: right;
+  padding: 2px;
+}
+
+.issued .custom-card-details .custom-card-status h3 {
+  color: var(--caribbean-green);
+}
+
+.cancelled .custom-card-details .custom-card-status h3 {
+  color: #ec476e;
+}
+
+.paid .custom-card-details .custom-card-status h3 {
+  color: #6bbb69;
+}
+
+.custom-card-details .custom-card-status h3 i {
+  margin-right: 8px;
+}
+
+.custom-card-details .custom-card-title {
+  margin-bottom: 10px;
+}
+
+.custom-card-otherdetails span,
+.custom-card-title span {
+  color: #9e9e9e;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.custom-card-title p {
+  font-size: 14px;
+}
+
+.custom-card-otherdetails h2 {
+  font-size: 16px;
+}
+
+.custom-card-otherdetails .ant-col-md-12:nth-child(2n + 1) .details {
+  margin-bottom: 9px;
+  padding-right: 10px;
+}
+
+.custom-card-status .action {
+  background: #cecece;
+  border-radius: 50%;
+  color: var(--white);
+  font-size: 22px;
+  font-weight: bold;
+  height: 30px;
+  line-height: 1.3;
+  text-align: center;
+  width: 30px;
+}
+
+// custom changes starts here
+
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td,
+.ant-table tfoot > tr > th,
+.ant-table tfoot > tr > td {
+  overflow-wrap: break-word;
+  padding: 6px !important;
+  position: relative;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: var(--alice-blue);
+}
+
+.ant-table-thead > tr > th {
+  background: var(--very-light-gray) !important;
+  font-size: 12px;
+  font-weight: bold !important;
+  padding-bottom: 11px !important;
+  padding-top: 9px !important;
+  vertical-align: bottom;
+}
+
+// custom changes ends here
+
+@media (max-width: 600px) {
+  .custom-table thead tr th {
+    min-width: 100px;
+  }
+}
+
+.alignItem-center {
+  margin-bottom: 3%;
+  margin-left: 20%;
+  margin-top: 3%;
+}
+
+.ant-table-measure-row {
+  display: none !important;
+}
