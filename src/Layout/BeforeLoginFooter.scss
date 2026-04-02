@@ -1,0 +1,115 @@
+@use "../Style/colors.scss" as colors;
+
+footer {
+  background-color: colors.$bg-footer;
+  font-size: 17px;
+  padding: 60px 0;
+  position: relative;
+  width: 100%;
+
+  .basic-info {
+    color: colors.$dark-gray;
+
+    img {
+      height: 30px;
+    }
+
+    @media (max-width: 600px) {
+      margin-bottom: 15px;
+    }
+  }
+
+  .padding-left {
+    padding-left: 30px;
+  }
+
+  .links {
+    margin-bottom: 20px;
+
+    h4 {
+      color: colors.$white;
+      font-size: 20px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    p {
+      color: colors.$white;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        width: 100%;
+        margin-bottom: 24px;
+
+        a {
+          color: colors.$white;
+          opacity: 0.9;
+          display: inline-block;
+          font-weight: 400;
+          position: relative;
+          text-decoration: none;
+          transition: all 0.3s linear;
+
+          span {
+            margin-right: 8px;
+          }
+
+          @media (max-width: 600px) {
+            font-size: 16px;
+            line-height: 33px;
+          }
+        }
+
+        a::before {
+          border: 1px dashed colors.$white;
+          content: "";
+          height: 1px;
+          left: 0;
+          opacity: 0;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          transition: all 0.3s linear;
+          width: 4px;
+        }
+
+        a:hover {
+          color: colors.$white;
+          padding-left: 10px;
+        }
+
+        a:hover::before {
+          opacity: 1;
+        }
+      }
+    }
+
+    @media (max-width: 600px) {
+      padding-left: 0;
+    }
+  }
+}
+
+.ant-back-top {
+  right: 20px;
+  bottom: 30px;
+  width: 30px;
+  height: 30px;
+  background: colors.$primary;
+  text-align: center;
+  line-height: 28px;
+  border-radius: 50%;
+  color: #fff;
+  @media (max-width: 900px) {
+    bottom: 20px;
+  }
+}

@@ -1,0 +1,424 @@
+// block-explorer-view
+
+.block-explorer-view {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.block-explorer-view .list-box {
+  min-height: 100px;
+  text-align: center;
+  width: 12.5%;
+}
+
+.block-explorer-view .list-box:nth-child(1) {
+  -webkit-animation-delay: 0s;
+  -moz-animation-delay: 0s;
+  animation-delay: 0s;
+}
+
+.block-explorer-view .list-box:nth-child(2) {
+  -webkit-animation-delay: 0.3s;
+  -moz-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+}
+
+.block-explorer-view .list-box:nth-child(3) {
+  -webkit-animation-delay: 0.6s;
+  -moz-animation-delay: 0.6s;
+  animation-delay: 0.6s;
+}
+
+.block-explorer-view .list-box:nth-child(4) {
+  -webkit-animation-delay: 0.9s;
+  -moz-animation-delay: 0.9s;
+  animation-delay: 0.9s;
+}
+
+.block-explorer-view .list-box:nth-child(5) {
+  -webkit-animation-delay: 1.2s;
+  -moz-animation-delay: 1.2s;
+  animation-delay: 1.2s;
+}
+
+.block-explorer-view .list-box:nth-child(6) {
+  -webkit-animation-delay: 1.5s;
+  -moz-animation-delay: 1.5s;
+  animation-delay: 1.5s;
+}
+
+.block-explorer-view .list-box:nth-child(7) {
+  -webkit-animation-delay: 1.8s;
+  -moz-animation-delay: 1.8s;
+  animation-delay: 1.8s;
+}
+
+.block-explorer-view .list-box:nth-child(8) {
+  -webkit-animation-delay: 1.8s;
+  -moz-animation-delay: 1.8s;
+  animation-delay: 1.8s;
+}
+
+.block-explorer-view .list-box:nth-child(9) {
+  -webkit-animation-delay: 2.1s;
+  -moz-animation-delay: 2.1s;
+  animation-delay: 2.1s;
+}
+
+.block-explorer-view .list-box:nth-child(10) {
+  -webkit-animation-delay: 2.4s;
+  -moz-animation-delay: 2.4s;
+  animation-delay: 2.4s;
+}
+
+.animate {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+// fade in animation starts
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+// fadeup animation starts
+@-webkit-keyframes fadeUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+@keyframes showTransmission {
+  to {
+    visibility: visible;
+  }
+}
+
+.fadeUp {
+  -webkit-animation-name: fadeUp;
+  animation-name: fadeUp;
+}
+
+.block-explorer-view .list-box .details {
+  padding: 0 10px;
+  position: relative;
+  width: 100%;
+}
+
+.block-explorer-view .list-box .details .icon-with-chain::after {
+  background: url("../../assets/images/block-explorer/chain.svg") repeat;
+  background-size: cover;
+  bottom: 21%;
+  content: "";
+  height: 6px;
+  position: absolute;
+  right: -33%;
+  width: 70%;
+  z-index: -1;
+}
+
+.block-explorer-view .list-box:last-child .details .icon-with-chain::after {
+  display: none;
+}
+
+.block-explorer-view .list-box .details .status {
+  min-height: 109px;
+  text-align: center;
+  width: 100%;
+}
+
+.block-explorer-view .list-box .details .status p {
+  font-size: 13px;
+}
+
+.block-explorer-view .list-box .details .status i {
+  color: var(--success);
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.block-explorer-view .list-box .icon-with-chain {
+  width: 100%;
+}
+
+.block-explorer-view .list-box .icon-with-chain .image-holder {
+  background: var(--white);
+  border: 3px dashed #999;
+  border-radius: 50%;
+  display: block;
+  height: 80px;
+  margin: 0 auto;
+  padding: 12px;
+  width: 80px;
+}
+
+.block-explorer-view .list-box .icon-with-chain .image-holder img {
+  height: 45px;
+  margin: 0 auto;
+  width: auto;
+}
+
+.block-explorer-view .list-box .icon-with-chain .image-holder i {
+  color: var(--white);
+  font-size: 42px;
+  line-height: 127%;
+  text-align: center;
+}
+
+.trasmission-received {
+  animation: showTransmission 0s 2s forwards;
+  visibility: hidden;
+}
+
+.trasmission-received i {
+  background: var(--success);
+  border-radius: 50%;
+  color: var(--white);
+  height: 37px;
+  line-height: 37px;
+  text-align: center;
+  width: 37px;
+}
+
+// blockchain-explorer-holder starts
+
+.blockchain-explorer-holder {
+  background: var(--white);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  bottom: 0;
+  box-shadow: 0 0 6px 0 #e4e4e4;
+  left: 0;
+  margin: 0 auto;
+  position: fixed;
+  right: 0;
+  width: 86%;
+  z-index: 10002;
+}
+
+.blockchain-explorer-holder .explorer-box-header,
+.vertical-view .heading {
+  background: #eef0f1;
+  border-bottom: 1px solid #f1f2f3;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding: 10px 20px;
+  position: relative;
+}
+
+.blockchain-explorer-holder .explorer-box-header span,
+.vertical-view .heading h2 {
+  color: var(--primary);
+  font-size: 18px;
+  font-weight: 600;
+  padding-left: 15px;
+}
+
+.blockchain-explorer-holder .explorer-box-header i.close-popup {
+  color: #f44336;
+  cursor: pointer;
+  float: right;
+  font-size: 14px;
+}
+
+.blockchain-explorer-holder .animate-blocks-container {
+  padding: 20px;
+}
+
+// blockchain-transmission
+
+.blockchain-transmission {
+  border-bottom: 1px solid var(--gray);
+  margin-bottom: 15px;
+  padding-bottom: 11px;
+  text-align: center;
+}
+
+.blockchain-transmission .details {
+  display: inline-block;
+}
+
+.blockchain-transmission .details h3 {
+  color: var(--black);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.blockchain-transmission .details .transaction-code {
+  color: var(--secondary);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.blockchain-transmission .details .date-and-time {
+  color: #7d7d7d;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+// vertical-view starts here
+
+.vertical-view {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  box-shadow: 0 0 6px 0 #e4e4e4;
+  width: 100%;
+}
+
+.vertical-view .more-details {
+  padding: 10px 20px 0;
+}
+
+.vertical-view .heading h2 {
+  margin-bottom: 0;
+  padding-left: 0;
+  text-align: center;
+}
+
+.vertical-view .block-explorer-view {
+  display: block;
+}
+
+.vertical-view .block-explorer-view .list-box {
+  margin-bottom: 19px;
+  min-height: auto;
+  width: 100%;
+}
+
+.vertical-view .block-explorer-view .list-box .details {
+  background: var(--white);
+  border: 1px solid var(--gray);
+  border-radius: 6px;
+  display: flex;
+  padding: 7px 20px;
+  position: relative;
+}
+
+.vertical-view .block-explorer-view .list-box .details::before {
+  background: url("../../assets/images/block-explorer/chain-vertical.svg");
+  background-size: 7px;
+  content: "";
+  height: 100%;
+  left: 0;
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  top: 34px;
+  width: 7px;
+  z-index: -1;
+}
+
+.vertical-view .block-explorer-view .list-box:last-child .details::before {
+  display: none;
+}
+
+.vertical-view .block-explorer-view .list-box .details .status {
+  min-height: auto;
+  padding-top: 11px;
+  text-align: left;
+}
+
+.vertical-view .block-explorer-view .list-box .details .status p {
+  margin-bottom: 0;
+}
+
+.vertical-view .block-explorer-view .list-box .icon-with-chain {
+  width: 79px;
+}
+
+.vertical-view .block-explorer-view .list-box .icon-with-chain .image-holder {
+  background: transparent;
+  border: none;
+  border-radius: unset;
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px 0;
+  width: auto;
+}
+
+.vertical-view .block-explorer-view .list-box .icon-with-chain .image-holder img {
+  float: right;
+  height: 33px;
+}
+
+.vertical-view .block-explorer-view .list-box .details .status i {
+  background: var(--white);
+  font-size: 23px;
+  left: 17px;
+  position: absolute;
+  top: -19px;
+}
+
+.vertical-view .block-explorer-view .list-box .details .icon-with-chain::after {
+  display: none;
+}
+
+// blockchain-transmission starts
+
+.vertical-view .blockchain-transmission .details h3 {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.vertical-view .blockchain-transmission .details .transaction-code {
+  font-size: 13px;
+}
+
+.vertical-view .blockchain-transmission .details .date-and-time {
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.vertical-view .trasmission-received i {
+  height: 30px;
+  line-height: 30px;
+  width: 30px;
+}

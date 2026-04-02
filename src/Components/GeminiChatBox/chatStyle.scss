@@ -1,0 +1,141 @@
+.chat-btn {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    animation: bounce 1s infinite;
+  }
+  @media screen and (max-width: 768px) {
+    .chat-btn {
+      bottom: 110px;
+      right: 20px;
+    }
+    .chat-popup {
+      bottom: 110px;
+    }
+  }
+
+  .text-container {
+    display: inline-block;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .chat-popup {
+    position:fixed;
+    bottom: 65px;
+    right: 20px;
+    border-radius: 15px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.404);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(124, 124, 124, 0.219);
+  }
+
+  .header{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo {
+    width: 25px;
+  }
+
+  .chat-logo {
+    width: 13px;
+  }
+  
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  .listening-window {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .chat-body {
+    display: flex;
+    flex-direction: column;
+    height: 360px;
+    overflow-y: auto;
+  }
+  
+  .chat-history {
+    flex-grow: 1;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .chat-message {
+    margin: 5px 0;
+  }
+  
+  .chat-message.user {
+    color: rgb(255, 255, 255);
+    font-size: small;
+    background: rgb(73,147,255);
+    max-width: max-content;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .chat-message.ai {
+    color: #000000;
+    background: rgb(230, 230, 230);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: small;
+  }
+
+  .confirm-area {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .chat-controls {
+    position:sticky;
+  }
+
+  .chat-prompts {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .text-bar {
+    display: flex;
+    padding-top: 5px;
+  }
+
+  .chat-controls button{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+::-webkit-scrollbar {
+  overflow: hidden;
+}

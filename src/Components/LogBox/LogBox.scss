@@ -1,0 +1,43 @@
+.timeline-container {
+  margin: 0 auto;
+  max-width: 750px;
+  padding: 15px;
+}
+
+.timeline-container .ant-timeline-item-left .timeline-list-container {
+  background-color: #f7f7f7;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-color: #210070;
+  border-left: 3px solid;
+  border-top-right-radius: 10px;
+  margin-bottom: 5px;
+  margin-left: 20px;
+  max-width: 320px;
+  padding: 10px 20px;
+}
+
+.timeline-container .ant-timeline-item-right .timeline-list-container {
+  background-color: #f7f7f7 !important;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-color: #210070;
+  border-right: 3px solid;
+  border-top-left-radius: 10px;
+  margin-bottom: 5px;
+  margin-right: 20px;
+  max-width: 320px;
+  padding: 10px 20px;
+}
+
+.timeline-container .Approved {
+  border-color: #4caf50 !important;
+}
+
+.timeline-container .Rejected {
+  border-color: #fa3729 !important;
+}
+
+.timeline-container .Returned {
+  border-color: #f56c00 !important;
+}

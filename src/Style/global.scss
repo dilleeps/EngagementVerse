@@ -1,0 +1,311 @@
+@use "./mixin.scss" as mixin;
+@use "./colors.scss" as colors;
+
+// global changes
+* {
+  font-family: "Inter", sans-serif !important;
+}
+body {
+  font-family: "Inter", sans-serif !important;
+  font-size: 13px;
+  color: colors.$text-second;
+  background-color: colors.$white !important;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none !important;
+}
+img {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+//  =============== border color ==========
+.border-color {
+  border-color: colors.$border;
+}
+
+// ============= background ==============
+.bg-primary {
+  background: colors.$primary !important;
+}
+.bg-primary-transparent {
+  background: colors.$primary-transparent;
+}
+.bg-gray {
+  background: colors.$bg-footer-gray;
+}
+.site-layout-background {
+  background: colors.$site-layout-background;
+}
+.bg-dashboard {
+  background: colors.$dashboard-bg;
+}
+.bg-template-footer {
+  background: colors.$dark-blue;
+}
+.bg-transparent {
+  background: transparent;
+}
+// =============== Font Size=================
+.font-1 {
+  @include mixin.font1;
+}
+
+.font-2 {
+  @include mixin.font2;
+}
+
+.font-3 {
+  @include mixin.font3;
+}
+
+.font-4 {
+  @include mixin.font4;
+}
+
+.font-5 {
+  @include mixin.font5;
+}
+.font-6 {
+  @include mixin.font6;
+}
+.font-10 {
+  @include mixin.fontCustom($font: 10px);
+}
+.font-12 {
+  @include mixin.fontCustom($font: 12px);
+}
+.font-16 {
+  @include mixin.fontCustom;
+}
+.font-18 {
+  @include mixin.fontCustom($font: 18px);
+}
+.font-20 {
+  @include mixin.fontCustom($font: 20px);
+}
+.font-70 {
+  @include mixin.fontCustom($font: 70px);
+}
+// ================ text colors =================
+body .text-primary {
+  color: colors.$primary !important;
+}
+.text-black {
+  color: colors.$text-second !important;
+}
+.text-gray {
+  color: colors.$text-gray;
+}
+.text-green {
+  color: colors.$green;
+}
+.text-red {
+  color: colors.$red;
+}
+.text-icon {
+  color: colors.$icon-color;
+}
+
+// text ellipsis
+.text-ellipsis1 {
+  @include mixin.ellipsis;
+}
+.text-ellipsis2 {
+  @include mixin.ellipsis($elipsis: 2);
+}
+.text-ellipsis3 {
+  @include mixin.ellipsis($elipsis: 3);
+}
+// =============== spacing ===============
+.spacing-large {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+
+  @media (max-width: 500px) {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+.spacing {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+
+  @media (max-width: 500px) {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+.spacing-top {
+  padding-top: 4rem;
+  @media (max-width: 500px) {
+    padding-top: 3rem;
+  }
+}
+.spacing-bottom {
+  padding-bottom: 4rem;
+  @media (max-width: 500px) {
+    padding-bottom: 3rem;
+  }
+}
+
+// custom responsive width
+.w-60 {
+  width: 60%;
+  @media (max-width: 600px) {
+    width: 100%;
+  }
+}
+
+// container and height
+.container-box {
+  max-width: 1344px;
+  display: flex;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  flex-direction: column;
+  margin: 0 auto;
+}
+.flex-height {
+  // display: flex;
+  // flex-direction: column;
+  min-height: 100vh;
+}
+.sips {
+  padding: 18px 40px 50px 40px;
+  @media (max-width: 600px) {
+    padding: 15px 15px 96px 15px;
+  }
+}
+
+// =============== card ===============
+.card {
+  margin-bottom: 2rem;
+  background-color: rgb(255, 255, 255);
+  padding-block: 1.5rem;
+  padding-inline: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px;
+}
+// side menu changes starts
+
+// loading content starts
+
+.loading-content {
+  height: 70vh;
+  flex-direction: column;
+  img {
+    height: 30px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+}
+
+// loading content ends
+
+// Module page =====================================
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.module-card {
+  background: colors.$white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.module-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.module-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.module-features {
+  li {
+    padding: 0.25rem 0;
+    position: relative;
+    padding-left: 2.3rem;
+    &:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: colors.$primary;
+      font-weight: bold;
+      background: colors.$white;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      border-radius: 50%;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// Pricing page =====================================
+
+.pricing-section {
+  background: linear-gradient(
+    135deg,
+    colors.$secondary 0%,
+    colors.$primary 100%
+  );
+  color: white;
+  padding: 4rem 0;
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .pricing-card {
+    background: #222347;
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    border: 4px solid colors.$primary;
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: scale(1.05);
+    }
+    .featured {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      transform: scale(1.02);
+    }
+    .price {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 1rem 0;
+    }
+  }
+}

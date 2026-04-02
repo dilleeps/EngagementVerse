@@ -1,0 +1,169 @@
+@use "./colors.scss" as colors;
+@use "./mixin.scss" as mixin;
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Set the Inter font for the entire app */
+body,
+.ant-typography,
+.ant-col,
+.ant-row,
+.ant-layout,
+.ant-btn,
+.ant-menu,
+.ant-input,
+.ant-dropdown,
+.ant-modal,
+.ant-tooltip,
+.ant-select,
+.ant-form,
+.ant-card,
+.ant-select-dropdown,
+.ant-table-cell,
+.ant-tabs,
+.ant-list-items,
+.ant-drawer,
+.timeline-list-container {
+  font-family: "Inter", sans-serif !important;
+}
+
+.ant-layout {
+  background: colors.$white;
+  height: 100%;
+}
+
+/* Chrome, Safari, Edge, Opera */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+a {
+  color: colors.$primary;
+  text-decoration: none;
+
+  &:hover {
+    color: colors.$primary;
+    text-decoration: none;
+  }
+}
+
+// Antd Button styles
+.form-control {
+  font-size: 12px !important;
+}
+
+a {
+  &.ant-btn {
+    padding-top: 8px !important;
+  }
+}
+.ant-btn {
+  padding: 8px 12px;
+  font-size: 15px;
+  &.ant-btn-sm {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+}
+.ant-btn,
+.ant-picker,
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
+.ant-select-show-search.ant-select:not(.ant-select-customize-input)
+  .ant-select-selector
+  input,
+.ant-input {
+  min-height: 38px;
+  border-radius: 5px;
+  box-shadow: unset;
+  &.ant-btn-sm {
+    min-height: 30px;
+  }
+  &.ant-btn-circle {
+    min-width: 38px;
+    min-height: 38px;
+    &.ant-btn {
+      min-width: 38px;
+      min-height: 38px;
+    }
+  }
+}
+
+.ant-input-affix-wrapper {
+  .ant-input {
+    min-height: 28px;
+  }
+}
+.ant-select-single .ant-select-selector .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  line-height: 40px;
+}
+.ant-btn-primary,
+.ant-btn-submit,
+.ant-btn-default,
+.ant-btn-secondary {
+  border-radius: 4px;
+}
+.ant-btn-primary,
+.ant-btn-primary:active,
+.ant-btn-submit,
+.ant-btn-submit:active {
+  color: colors.$white;
+  background-color: colors.$primary;
+  border-color: colors.$primary;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus,
+.ant-btn-submit:hover,
+.ant-btn-submit:focus {
+  background-color: colors.$primary !important;
+  border-color: colors.$primary;
+}
+.ant-btn-secondary,
+.ant-btn-secondary:active,
+.ant-btn-secondary:hover,
+.ant-btn-secondary:focus {
+  color: colors.$white;
+  background-color: colors.$secondary;
+  border-color: colors.$secondary;
+}
+
+// ghost button
+.ant-btn-primary {
+  &.ant-btn-background-ghost {
+    border-color: colors.$primary;
+    color: colors.$primary;
+  }
+  &:focus,
+  &:hover {
+    &.ant-btn-background-ghost {
+      border-color: colors.$primary;
+      color: colors.$primary;
+    }
+  }
+}
+.ant-btn-secondary {
+  &.ant-btn-background-ghost {
+    border-color: colors.$secondary;
+    color: colors.$secondary;
+  }
+  &:focus,
+  &:hover {
+    &.ant-btn-background-ghost {
+      border-color: colors.$secondary;
+      color: colors.$secondary;
+    }
+  }
+}
