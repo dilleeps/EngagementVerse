@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ev_db
+      POSTGRES_USER: ev_user
+      POSTGRES_PASSWORD: ev_local_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ev_user -d ev_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3,sqs,opensearch
+      DEFAULT_REGION: us-east-1
+    volumes:
+      - localstack_data:/var/lib/localstack
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://ev_user:ev_local_password@postgres:5432/ev_db
+      REDIS_URL: redis://redis:6379/0
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      COGNITO_USER_POOL_ID: local_pool
+      COGNITO_CLIENT_ID: local_client
+      COGNITO_REGION: us-east-1
+      S3_RECORDINGS_BUCKET: ev-call-recordings
+      S3_MLR_BUCKET: ev-mlr-scripts
+      S3_EXPORTS_BUCKET: ev-exports
+      S3_IMPORTS_BUCKET: ev-hcp-imports
+      SQS_CALL_DISPATCH_URL: http://localstack:4566/000000000000/call-dispatch.fifo
+      SQS_CRM_SYNC_URL: http://localstack:4566/000000000000/crm-sync.fifo
+      SQS_FOLLOW_UP_URL: http://localstack:4566/000000000000/follow-up-tasks
+      CONNECT_INSTANCE_ID: local-connect
+      ENVIRONMENT: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+      NEXT_PUBLIC_COGNITO_USER_POOL_ID: ""
+      NEXT_PUBLIC_COGNITO_CLIENT_ID: ""
+      NEXT_PUBLIC_COGNITO_DOMAIN: ""
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  localstack_data:
