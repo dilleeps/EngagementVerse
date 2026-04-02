@@ -1,0 +1,13 @@
+.counter-facts {
+  .count {
+    font-size: 39px;
+    @media (max-width: 800px) {
+      font-size: 25px;
+    }
+  }
+  .name {
+    @media (max-width: 800px) {
+      font-size: 13px;
+    }
+  }
+}

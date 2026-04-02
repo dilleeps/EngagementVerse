@@ -1,0 +1,196 @@
+@use "./colors.scss" as colors;
+
+@mixin card-bg {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background: colors.$white-smoke;
+  background: hsla(0deg, 0%, 100%, 0.98);
+  border: 1px solid colors.$border;
+  -webkit-box-shadow:
+    0 -1px 1px 0 rgba(0, 0, 0, 0.01%),
+    0 -2px 16px 0 rgba(0, 0, 0, 0.05%);
+  box-shadow:
+    0 -1px 1px 0 rgba(0, 0, 0, 0%),
+    0 -2px 16px 0 rgba(0, 0, 0, 0.05%);
+}
+@mixin HeadingStyle {
+  color: colors.$primary;
+  font-size: 20px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+@mixin fullWidth {
+  width: 100%;
+}
+
+@mixin afterIcon {
+  font-family: Flaticon;
+  line-height: 12px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 13px;
+}
+
+@mixin titleOverflowHide {
+  -webkit-align-self: center;
+  align-self: center;
+  -webkit-box-flex: 1 1 auto;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  padding-right: 12px;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: -webkit-calc(100% - 56px);
+  width: calc(100% - 56px);
+}
+
+@mixin grayBorder {
+  border: 1px solid colors.$border;
+}
+
+@mixin antInputFocus {
+  border: 1px solid colors.$chinese-silver;
+  box-shadow: none;
+}
+
+// font styles
+
+@mixin font1 {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 28px;
+}
+
+@mixin font2 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+@mixin font3 {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+@mixin font4 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+@mixin font5 {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+@mixin font6 {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+@mixin fontCustom($font: 16px) {
+  font-size: $font;
+}
+@mixin backgroundNoRepeat(
+  $repeat: no-repeat,
+  $size: cover,
+  $position: bottom center
+) {
+  background-position: $position;
+  background-repeat: $repeat;
+  background-size: $size;
+}
+
+@mixin beforeContentLeft(
+  $content: "",
+  $position: absolute,
+  $top: 0,
+  $left: 0,
+  $right: unset,
+  $bottom: unset,
+  $width: 100%,
+  $height: 100%,
+  $background: #222,
+  $opacity: 0.4
+) {
+  background: $background;
+  bottom: $bottom;
+  content: $content;
+  height: $height;
+  left: $left;
+  opacity: $opacity;
+  position: $position;
+  right: $right;
+  top: $top;
+  width: $width;
+}
+
+// ellipsis
+@mixin ellipsis($elipsis: 1) {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: $elipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: initial;
+}
+
+// flexbox
+@mixin flexBox($display: flex, $boxAlign: center, $alignItem: center) {
+  display: $display;
+  -webkit-box-align: $boxAlign;
+  align-items: $alignItem;
+}
+
+@mixin flexBoxDesign(
+  $display: flex,
+  $alignItem: center,
+  $justifyContent: space-between,
+  $flexDirection: row,
+  $gap: unset
+) {
+  display: $display;
+  align-items: $alignItem;
+  justify-content: $justifyContent;
+  flex-direction: $flexDirection;
+  gap: $gap;
+}
+
+// border-radius
+@mixin borderRadius($radius: 0) {
+  border-radius: $radius;
+}
+@mixin borderRadiusTop($start: 0, $end: 0) {
+  border-start-start-radius: $start;
+  border-start-end-radius: $end;
+}
+
+// Avatar
+@mixin avatar(
+  $background: transparent,
+  $color: colors.$white,
+  $size: 16px,
+  $height: 26px,
+  $width: 26px,
+  $lineHeight: 26px,
+  $borderRadius: 50%
+) {
+  background: colors.$primary;
+  border-radius: $borderRadius;
+  color: colors.$white;
+  font-size: $size;
+  height: $height;
+  line-height: $lineHeight;
+  margin-right: 0;
+  width: $width;
+}

@@ -1,0 +1,19 @@
+/*!
+ * Bootstrap v4.6.0 (https://getbootstrap.com/)
+ * Copyright 2011-2021 The Bootstrap Authors
+ * Copyright 2011-2021 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+// Limited
+
+$primary: #8550c2;
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables"; // this will now successfully import variables-dark
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/bootstrap"; // optional: import full Bootstrap
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

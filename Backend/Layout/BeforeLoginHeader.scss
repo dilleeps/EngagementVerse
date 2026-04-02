@@ -1,0 +1,46 @@
+@use "../Style/colors.scss" as colors;
+
+.header {
+  font-size: 15px;
+  height: 70px;
+  padding: 0 30px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  &.scrolled {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9;
+    background: colors.$white;
+    box-shadow: 0 0px 10px #e2e2e2;
+    border-bottom: transparent;
+  }
+  .brand {
+    margin-right: 2.5rem;
+    img {
+      height: 26px;
+    }
+  }
+  ul {
+    display: flex;
+    gap: 2.5rem;
+    li {
+      a {
+        color: colors.$black;
+        &:hover {
+          color: colors.$primary;
+        }
+      }
+    }
+  }
+  // contact
+  .contact {
+    a {
+      color: colors.$black;
+      &:hover {
+        color: colors.$primary;
+      }
+    }
+  }
+}
