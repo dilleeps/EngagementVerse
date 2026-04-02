@@ -1,0 +1,37 @@
+{
+  "version": "0.2",
+  "files": ["src/**/*.{js,jsx,ts,tsx}"],
+  "ignoreRegExpList": ["/[\\u0621-\\u064A]+/"],
+  "ignorePaths": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "public",
+    "package.json",
+    "*.config.js",
+    ".eslintrc.json",
+    "project-words.txt"
+  ],
+  "language": "en,en-GB",
+  "dictionaries": ["project-words"],
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": "./project-words.txt",
+      "addWords": true
+    }
+  ],
+  "overrides": [
+    {
+      "filename": "*.(js|mjs|ts|tsx|jsx|json)",
+      "dictionaryDefinitions": [
+        {
+          "name": "project-words",
+          "path": "./project-words.txt",
+          "addWords": true
+        }
+      ]
+    }
+  ]
+}
