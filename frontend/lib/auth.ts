@@ -1,4 +1,4 @@
-import type { UserRole } from '../../shared/types/index';
+import type { UserRole } from '@/types';
 
 // ─── Cookie helpers ──────────────────────────────────────────────────────────
 

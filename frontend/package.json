@@ -21,8 +21,7 @@
     "axios": "^1.7.0",
     "next-auth": "^4.24.0",
     "clsx": "^2.1.0",
-    "tailwind-merge": "^2.4.0",
-    "@engagement-verse/shared": "file:../shared"
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

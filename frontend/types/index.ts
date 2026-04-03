@@ -26,11 +26,11 @@ export type {
   OutcomeData,
   ChannelMixData,
   CampaignPerformance,
-} from '../../shared/types/index';
+} from './shared';
 
 // ─── Frontend-specific types ─────────────────────────────────────────────────
 
-import type { Speaker, InsightType } from '../../shared/types/index';
+import type { Speaker, InsightType } from './shared';
 
 /** WebSocket transcript message received in real-time during a call. */
 export interface TranscriptMessage {
