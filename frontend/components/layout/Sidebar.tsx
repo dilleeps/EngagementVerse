@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
   { label: "AI Calls", href: "/calls", icon: "\u{1F4DE}" },
   { label: "HCP Profiles", href: "/hcp", icon: "\u{1F464}" },
   { label: "Campaigns", href: "/campaigns", icon: "\u{1F4E3}" },
+  { label: "Leads", href: "/leads", icon: "\u{1F3AF}" },
   { label: "Analytics", href: "/analytics", icon: "\u{1F4C8}" },
 ];
 
