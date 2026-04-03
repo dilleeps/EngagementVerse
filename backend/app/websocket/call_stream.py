@@ -1,20 +1,26 @@
-"""WebSocket endpoint for real-time call streaming events."""
+"""WebSocket endpoint for real-time call transcript streaming via Redis pub/sub."""
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import Any
 
+import redis.asyncio as aioredis
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
+from app.config import get_settings
 
 logger = logging.getLogger("engagementverse.ws")
 
 ws_router = APIRouter()
 
+
 # ---------------------------------------------------------------------------
-# Simple connection manager
+# Simple connection manager (kept for optional direct broadcasting)
 # ---------------------------------------------------------------------------
+
 
 class ConnectionManager:
     """Track active WebSocket connections keyed by call_id."""
@@ -48,19 +54,65 @@ manager = ConnectionManager()
 
 
 # ---------------------------------------------------------------------------
-# WebSocket route
+# WebSocket route with Redis pub/sub
 # ---------------------------------------------------------------------------
 
-@ws_router.websocket("/ws/calls/{call_id}")
-async def call_stream(websocket: WebSocket, call_id: str) -> None:
-    """Stream real-time transcript and insight events for a call."""
+
+@ws_router.websocket("/ws/calls/{call_id}/transcript")
+async def call_transcript_stream(websocket: WebSocket, call_id: str) -> None:
+    """Stream real-time transcript lines for a call.
+
+    Subscribes to the Redis pub/sub channel ``call:{call_id}:transcript`` and
+    forwards every published message to the connected WebSocket client.  Also
+    handles inbound client messages (e.g. heartbeat pings).
+    """
     await manager.connect(call_id, websocket)
+
+    settings = get_settings()
+    redis_conn = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+    pubsub = redis_conn.pubsub()
+    channel_name = f"call:{call_id}:transcript"
+
     try:
-        while True:
-            data = await websocket.receive_text()
-            # Echo or process incoming messages (e.g. client heartbeat)
-            msg = json.loads(data)
-            if msg.get("type") == "ping":
-                await websocket.send_text(json.dumps({"type": "pong"}))
+        await pubsub.subscribe(channel_name)
+
+        async def _relay_redis() -> None:
+            """Read from Redis pub/sub and forward to WebSocket."""
+            async for message in pubsub.listen():
+                if message["type"] == "message":
+                    try:
+                        await websocket.send_text(message["data"])
+                    except Exception:
+                        break
+
+        async def _handle_client() -> None:
+            """Read from WebSocket (heartbeats, etc.)."""
+            while True:
+                data = await websocket.receive_text()
+                try:
+                    msg = json.loads(data)
+                    if msg.get("type") == "ping":
+                        await websocket.send_text(json.dumps({"type": "pong"}))
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+        # Run both tasks concurrently; when either finishes the other is cancelled
+        relay_task = asyncio.create_task(_relay_redis())
+        client_task = asyncio.create_task(_handle_client())
+
+        done, pending = await asyncio.wait(
+            {relay_task, client_task},
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+        for task in pending:
+            task.cancel()
+
     except WebSocketDisconnect:
+        logger.info("Client disconnected from call_id=%s", call_id)
+    except Exception:
+        logger.exception("Unexpected error in ws call_id=%s", call_id)
+    finally:
         manager.disconnect(call_id, websocket)
+        await pubsub.unsubscribe(channel_name)
+        await pubsub.aclose()
+        await redis_conn.aclose()

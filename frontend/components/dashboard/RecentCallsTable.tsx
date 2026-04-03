@@ -6,52 +6,57 @@ import type { CallSession, CallStatus } from "@/types";
 
 interface RecentCallsTableProps {
   calls: CallSession[];
+  className?: string;
 }
 
-const statusToBadgeVariant: Record<CallStatus, "live" | "completed" | "escalated" | "scheduled" | "queued" | "opted_out"> = {
+const statusToBadgeVariant: Record<
+  CallStatus,
+  "live" | "completed" | "escalated" | "scheduled" | "queued" | "opted_out"
+> = {
   LIVE: "live",
   COMPLETED: "completed",
   ESCALATED: "escalated",
+  NO_ANSWER: "scheduled",
   QUEUED: "queued",
-  NO_ANSWER: "completed",
   OPTED_OUT: "opted_out",
 };
 
 function statusLabel(status: CallStatus): string {
-  return status
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/^\w/, (c) => c.toUpperCase());
+  return status.charAt(0) + status.slice(1).toLowerCase().replace("_", " ");
 }
 
-export function RecentCallsTable({ calls }: RecentCallsTableProps) {
+export function RecentCallsTable({ calls, className }: RecentCallsTableProps) {
   return (
-    <div className="border border-black/[0.08] rounded-lg bg-white p-4">
+    <div
+      className={cn(
+        "border border-black/[0.08] rounded-lg bg-white p-4",
+        className
+      )}
+    >
       <h3 className="text-sm font-semibold text-gray-900 mb-4">Recent calls</h3>
-
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 text-left">
-              <th className="pb-3 font-medium text-gray-500">HCP</th>
-              <th className="pb-3 font-medium text-gray-500">Specialty</th>
-              <th className="pb-3 font-medium text-gray-500">Status</th>
-              <th className="pb-3 font-medium text-gray-500">Duration</th>
-              <th className="pb-3 font-medium text-gray-500">Date</th>
-              <th className="pb-3 font-medium text-gray-500 text-right">Action</th>
+            <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="pb-3 pr-4">HCP</th>
+              <th className="pb-3 pr-4">Specialty</th>
+              <th className="pb-3 pr-4">Status</th>
+              <th className="pb-3 pr-4">Duration</th>
+              <th className="pb-3 pr-4">Date</th>
+              <th className="pb-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody>
             {calls.map((call) => {
               const hcpName = call.hcp
                 ? `${call.hcp.firstName} ${call.hcp.lastName}`
-                : "Unknown HCP";
-              const specialty = call.hcp?.specialty ?? "OTHER";
+                : call.hcpId;
+              const specialty = call.hcp?.specialty ?? "—";
 
               return (
                 <tr
                   key={call.id}
-                  className="group hover:bg-gray-50/50 transition-colors"
+                  className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
                 >
                   <td className="py-3 pr-4">
                     <Link
@@ -59,13 +64,15 @@ export function RecentCallsTable({ calls }: RecentCallsTableProps) {
                       className="flex items-center gap-2.5"
                     >
                       <Avatar name={hcpName} size="sm" />
-                      <span className="font-medium text-gray-900 group-hover:text-brand">
+                      <span className="font-medium text-gray-900">
                         {hcpName}
                       </span>
                     </Link>
                   </td>
-                  <td className="py-3 pr-4 text-gray-600 capitalize">
-                    {specialty.toLowerCase()}
+                  <td className="py-3 pr-4 text-gray-600">
+                    {specialty === "—"
+                      ? specialty
+                      : specialty.charAt(0) + specialty.slice(1).toLowerCase()}
                   </td>
                   <td className="py-3 pr-4">
                     <Badge variant={statusToBadgeVariant[call.status]}>
@@ -75,18 +82,15 @@ export function RecentCallsTable({ calls }: RecentCallsTableProps) {
                   <td className="py-3 pr-4 text-gray-600 tabular-nums">
                     {call.durationSeconds != null
                       ? formatDuration(call.durationSeconds)
-                      : "--:--"}
+                      : "—"}
                   </td>
-                  <td className="py-3 pr-4 text-gray-500">
+                  <td className="py-3 pr-4 text-gray-600">
                     {formatDate(call.createdAt)}
                   </td>
-                  <td className="py-3 text-right">
+                  <td className="py-3">
                     <Link
                       href={`/calls/${call.id}`}
-                      className={cn(
-                        "inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium",
-                        "text-brand hover:bg-brand-light transition-colors"
-                      )}
+                      className="text-brand hover:text-brand-dark font-medium text-xs"
                     >
                       View
                     </Link>
@@ -97,12 +101,6 @@ export function RecentCallsTable({ calls }: RecentCallsTableProps) {
           </tbody>
         </table>
       </div>
-
-      {calls.length === 0 && (
-        <p className="py-8 text-center text-sm text-gray-400">
-          No recent calls to display.
-        </p>
-      )}
     </div>
   );
 }

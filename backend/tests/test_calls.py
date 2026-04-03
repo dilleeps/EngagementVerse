@@ -8,7 +8,7 @@ import pytest
 from httpx import AsyncClient
 
 from app.models.call import CallSession, CallStatus
-from app.models.hcp import HCP
+from app.models.hcp import HCP, ChannelType
 
 AUTH = {"Authorization": "Bearer test-token"}
 
@@ -32,7 +32,6 @@ async def test_list_calls_paginated(client: AsyncClient, sample_call: CallSessio
 @pytest.mark.asyncio
 async def test_get_call_queue(client: AsyncClient, db_session, sample_hcp: HCP, mock_users):
     """GET /api/v1/calls/queue returns only QUEUED calls."""
-    from app.models.hcp import ChannelType
     queued_call = CallSession(
         id=uuid.uuid4(),
         hcp_id=sample_hcp.id,
@@ -46,17 +45,20 @@ async def test_get_call_queue(client: AsyncClient, db_session, sample_hcp: HCP, 
     resp = await client.get("/api/v1/calls/queue", headers=AUTH)
     assert resp.status_code == 200
     body = resp.json()
-    for item in body["items"]:
+    assert isinstance(body, list)
+    for item in body:
         assert item["status"] == "QUEUED"
 
 
 @pytest.mark.asyncio
 async def test_get_call_by_id_happy(client: AsyncClient, sample_call: CallSession):
-    """GET /api/v1/calls/{id} returns the call."""
+    """GET /api/v1/calls/{id} returns the call with transcripts and insights."""
     resp = await client.get(f"/api/v1/calls/{sample_call.id}", headers=AUTH)
     assert resp.status_code == 200
     body = resp.json()
     assert body["id"] == str(sample_call.id)
+    assert "transcripts" in body
+    assert "insights" in body
 
 
 @pytest.mark.asyncio
@@ -74,7 +76,7 @@ async def test_escalate_call(client: AsyncClient, sample_call: CallSession, mock
     resp = await client.post(
         f"/api/v1/calls/{sample_call.id}/escalate",
         headers=AUTH,
-        json={"user_id": target_user_id, "reason": "HCP requested specialist"},
+        json={"escalate_to_user_id": target_user_id, "reason": "HCP requested specialist"},
     )
     assert resp.status_code == 200
     body = resp.json()
@@ -87,7 +89,7 @@ async def test_end_call(client: AsyncClient, sample_call: CallSession):
     resp = await client.post(
         f"/api/v1/calls/{sample_call.id}/end",
         headers=AUTH,
-        json={"outcome_notes": "Call completed successfully"},
+        json={"outcome_notes": "Call completed successfully", "engagement_score": 0.85},
     )
     assert resp.status_code == 200
     body = resp.json()
@@ -102,12 +104,13 @@ async def test_add_insight(client: AsyncClient, sample_call: CallSession):
         f"/api/v1/calls/{sample_call.id}/insights",
         headers=AUTH,
         json={
+            "call_id": str(sample_call.id),
             "insight_type": "UPSELL",
             "content": "HCP shows interest in new formulation",
             "confidence": 0.92,
         },
     )
-    assert resp.status_code == 200
+    assert resp.status_code == 201
     body = resp.json()
     assert body["insight_type"] == "UPSELL"
     assert body["content"] == "HCP shows interest in new formulation"

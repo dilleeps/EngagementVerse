@@ -10,39 +10,43 @@ interface Activity {
 
 interface ActivityFeedProps {
   activities: Activity[];
+  className?: string;
 }
 
 const typeDotColor: Record<string, string> = {
-  call: "bg-brand",
+  call: "bg-green-500",
   insight: "bg-blue-500",
   escalation: "bg-red-500",
   campaign: "bg-purple-500",
-  crm: "bg-amber-500",
-  note: "bg-gray-400",
+  sync: "bg-amber-500",
 };
 
-function getRelativeTime(timestamp: string): string {
+function relativeTime(iso: string): string {
   const now = Date.now();
-  const then = new Date(timestamp).getTime();
+  const then = new Date(iso).getTime();
   const diffMs = now - then;
-  const diffSec = Math.floor(diffMs / 1000);
 
-  if (diffSec < 60) return `${diffSec}s ago`;
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
-  const diffDay = Math.floor(diffHr / 24);
-  return `${diffDay}d ago`;
+  const seconds = Math.floor(diffMs / 1000);
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
-export function ActivityFeed({ activities }: ActivityFeedProps) {
+export function ActivityFeed({ activities, className }: ActivityFeedProps) {
   return (
-    <div className="border border-black/[0.08] rounded-lg bg-white p-4">
+    <div
+      className={cn(
+        "border border-black/[0.08] rounded-lg bg-white p-4",
+        className
+      )}
+    >
       <h3 className="text-sm font-semibold text-gray-900 mb-4">
         Activity feed
       </h3>
-
       <div className="max-h-80 overflow-y-auto space-y-3 pr-1">
         {activities.map((activity) => (
           <div key={activity.id} className="flex items-start gap-3">
@@ -52,23 +56,22 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 typeDotColor[activity.type] ?? "bg-gray-400"
               )}
             />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm text-gray-700 leading-snug">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-700">
                 <span className="font-medium text-gray-900">
                   {activity.hcp_name}
                 </span>{" "}
                 {activity.message}
               </p>
-              <p className="mt-0.5 text-xs text-gray-400">
-                {getRelativeTime(activity.timestamp)}
+              <p className="text-xs text-gray-400 mt-0.5">
+                {relativeTime(activity.timestamp)}
               </p>
             </div>
           </div>
         ))}
-
         {activities.length === 0 && (
-          <p className="py-6 text-center text-sm text-gray-400">
-            No recent activity.
+          <p className="text-sm text-gray-400 text-center py-6">
+            No recent activity
           </p>
         )}
       </div>

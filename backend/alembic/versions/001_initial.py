@@ -1,4 +1,4 @@
-"""Initial migration – create all tables.
+"""Initial migration -- create all tables.
 
 Revision ID: 001_initial
 Revises:
@@ -55,13 +55,19 @@ def upgrade() -> None:
     )
     insight_type_enum.create(op.get_bind(), checkfirst=True)
 
+    communication_type_enum = sa.Enum(
+        "LABEL_CHANGE", "SAFETY_ALERT", "PIPELINE_UPDATE", "GENERAL",
+        name="communication_type_enum",
+    )
+    communication_type_enum.create(op.get_bind(), checkfirst=True)
+
     campaign_status_enum = sa.Enum(
-        "DRAFT", "PENDING_MLR", "APPROVED", "ACTIVE", "PAUSED", "COMPLETED", "ARCHIVED",
+        "DRAFT", "PENDING_MLR", "APPROVED", "ACTIVE", "PAUSED", "COMPLETED",
         name="campaign_status_enum",
     )
     campaign_status_enum.create(op.get_bind(), checkfirst=True)
 
-    mlr_status_enum = sa.Enum("DRAFT", "SUBMITTED", "APPROVED", "REJECTED", name="mlr_status_enum")
+    mlr_status_enum = sa.Enum("DRAFT", "IN_REVIEW", "APPROVED", "REJECTED", name="mlr_status_enum")
     mlr_status_enum.create(op.get_bind(), checkfirst=True)
 
     # ---- hcps ----
@@ -124,19 +130,19 @@ def upgrade() -> None:
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("drug_name", sa.String(200), nullable=False),
+        sa.Column("communication_type", communication_type_enum, nullable=False),
         sa.Column("status", campaign_status_enum, nullable=False, server_default="DRAFT"),
-        sa.Column("description", sa.Text, nullable=True),
-        sa.Column("start_date", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("end_date", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("mlr_script_version", sa.String(50), nullable=True),
+        sa.Column("mlr_approved_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("mlr_approved_by", postgresql.UUID(as_uuid=True), sa.ForeignKey("app_users.id"), nullable=True),
         sa.Column("created_by", postgresql.UUID(as_uuid=True), sa.ForeignKey("app_users.id"), nullable=False),
-        sa.Column("target_specialty", sa.String(100), nullable=True),
-        sa.Column("budget", sa.Float, nullable=True),
-        sa.Column("metadata_json", postgresql.JSON, nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("scheduled_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
     )
     op.create_index("ix_campaigns_status", "campaigns", ["status"])
     op.create_index("ix_campaigns_created_by", "campaigns", ["created_by"])
+    op.create_index("ix_campaigns_drug_name", "campaigns", ["drug_name"])
 
     # ---- call_sessions ----
     op.create_table(
@@ -188,25 +194,24 @@ def upgrade() -> None:
     op.create_index("ix_ai_insights_call_id", "ai_insights", ["call_id"])
     op.create_index("ix_ai_insights_type", "ai_insights", ["insight_type"])
 
-    # ---- campaign_audiences ----
+    # ---- campaign_audiences (composite PK: campaign_id, hcp_id) ----
     op.create_table(
         "campaign_audiences",
-        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("campaign_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("hcp_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("hcps.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("priority", sa.Integer, default=0),
-        sa.Column("metadata_json", postgresql.JSON, nullable=True),
+        sa.Column("campaign_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("campaigns.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("hcp_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("hcps.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("selected", sa.Boolean, nullable=False, server_default="true"),
+        sa.Column("priority_order", sa.Integer, default=0),
     )
     op.create_index("ix_campaign_audiences_campaign", "campaign_audiences", ["campaign_id"])
     op.create_index("ix_campaign_audiences_hcp", "campaign_audiences", ["hcp_id"])
 
-    # ---- campaign_channels ----
+    # ---- campaign_channels (composite PK: campaign_id, channel) ----
     op.create_table(
         "campaign_channels",
-        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("campaign_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("channel_type", channel_type_enum, nullable=False),
-        sa.Column("weight", sa.Float, default=1.0),
+        sa.Column("campaign_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("campaigns.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column("channel", channel_type_enum, primary_key=True),
+        sa.Column("enabled", sa.Boolean, nullable=False, server_default="true"),
+        sa.Column("sequence_order", sa.Integer, default=0),
     )
     op.create_index("ix_campaign_channels_campaign", "campaign_channels", ["campaign_id"])
 
@@ -218,7 +223,9 @@ def upgrade() -> None:
         sa.Column("version", sa.String(50), nullable=False),
         sa.Column("s3_key", sa.String(500), nullable=False),
         sa.Column("status", mlr_status_enum, nullable=False, server_default="DRAFT"),
-        sa.Column("reviewer_notes", sa.Text, nullable=True),
+        sa.Column("reviewed_by", postgresql.UUID(as_uuid=True), sa.ForeignKey("app_users.id"), nullable=True),
+        sa.Column("reviewed_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("notes", sa.Text, nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
     )
     op.create_index("ix_mlr_scripts_campaign", "mlr_scripts", ["campaign_id"])
@@ -240,6 +247,7 @@ def downgrade() -> None:
     for enum_name in [
         "mlr_status_enum",
         "campaign_status_enum",
+        "communication_type_enum",
         "insight_type_enum",
         "speaker_type_enum",
         "call_status_enum",

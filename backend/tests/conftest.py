@@ -1,9 +1,11 @@
-"""Shared test fixtures – async SQLite in-memory DB, httpx AsyncClient, mock users."""
+"""Shared test fixtures -- async SQLite in-memory DB, httpx AsyncClient, mock users."""
 
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, timezone
 from typing import AsyncGenerator
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
@@ -13,9 +15,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.models.base import Base
 from app.models.user import AppUser, UserRole
-from app.models.hcp import HCP, Specialty, KOLTier, ChannelType
+from app.models.hcp import HCP, Specialty, KOLTier, ChannelType, PrescribingBehavior
 from app.models.call import CallSession, CallStatus, Transcript, AIInsight, SpeakerType, InsightType
-from app.models.campaign import Campaign, CampaignStatus, CampaignAudience, CampaignChannel, MLRScript, MLRStatus
+from app.models.campaign import (
+    Campaign, CampaignStatus, CampaignAudience, CampaignChannel,
+    MLRScript, MLRStatus, CommunicationType,
+)
 
 # ---------------------------------------------------------------------------
 # Async SQLite engine (aiosqlite)
@@ -24,12 +29,14 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
 engine = create_async_engine(TEST_DATABASE_URL, echo=False)
 
+
 # SQLite does not enforce FK constraints by default; enable them.
 @event.listens_for(engine.sync_engine, "connect")
 def _set_sqlite_pragma(dbapi_conn, connection_record):
     cursor = dbapi_conn.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
+
 
 async_test_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -103,6 +110,17 @@ def _override_get_db():
     return _inner
 
 
+def _override_get_redis():
+    """Return a mock Redis that always returns None for get (cache miss)."""
+    async def _inner():
+        mock_redis = AsyncMock()
+        mock_redis.get = AsyncMock(return_value=None)
+        mock_redis.set = AsyncMock(return_value=True)
+        mock_redis.aclose = AsyncMock()
+        return mock_redis
+    return _inner
+
+
 # ---------------------------------------------------------------------------
 # httpx AsyncClient fixture
 # ---------------------------------------------------------------------------
@@ -112,11 +130,12 @@ async def client(mock_users: dict[str, AppUser]) -> AsyncGenerator[AsyncClient, 
     # Default to MSL_LEAD user
     _current_test_user = mock_users["MSL_LEAD"]
 
-    from app.main import app  # noqa: E402 (deferred import)
-    from app.infra.deps import get_current_user, get_db
+    from app.main import app
+    from app.infra.deps import get_current_user, get_db, get_redis
 
     app.dependency_overrides[get_current_user] = _override_get_current_user()
     app.dependency_overrides[get_db] = _override_get_db()
+    app.dependency_overrides[get_redis] = _override_get_redis()
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -166,6 +185,7 @@ async def sample_campaign(db_session: AsyncSession, mock_users: dict[str, AppUse
         id=uuid.uuid4(),
         name="Test Campaign",
         drug_name="TestDrug",
+        communication_type=CommunicationType.GENERAL,
         status=CampaignStatus.DRAFT,
         created_by=mock_users["MSL_LEAD"].id,
     )
@@ -188,6 +208,7 @@ async def sample_call(
         status=CallStatus.LIVE,
         channel=ChannelType.VOICE,
         duration_seconds=120,
+        started_at=datetime.now(timezone.utc),
     )
     db_session.add(call)
     await db_session.commit()

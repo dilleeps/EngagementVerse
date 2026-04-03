@@ -4,29 +4,29 @@ from __future__ import annotations
 
 import io
 import uuid
+from datetime import datetime, timezone
 
 import pytest
 from httpx import AsyncClient
 
-from app.models.hcp import HCP, PrescribingBehavior, Specialty, KOLTier
+from app.models.hcp import HCP, PrescribingBehavior, Specialty, KOLTier, ChannelType
 from app.models.call import CallSession, CallStatus
-from app.models.hcp import ChannelType
 
 AUTH = {"Authorization": "Bearer test-token"}
 
 
 @pytest.mark.asyncio
 async def test_search_hcps(client: AsyncClient, sample_hcp: HCP):
-    """GET /api/v1/hcp?search=... filters by name or NPI."""
+    """GET /api/v1/hcp?q=... filters by name or NPI."""
     # Search by last name
-    resp = await client.get("/api/v1/hcp?search=Doe", headers=AUTH)
+    resp = await client.get("/api/v1/hcp?q=Doe", headers=AUTH)
     assert resp.status_code == 200
     body = resp.json()
     assert body["total"] >= 1
     assert any(h["last_name"] == "Doe" for h in body["items"])
 
     # Search that returns nothing
-    resp = await client.get("/api/v1/hcp?search=ZZZZZZZ", headers=AUTH)
+    resp = await client.get("/api/v1/hcp?q=ZZZZZZZ", headers=AUTH)
     assert resp.status_code == 200
     assert resp.json()["total"] == 0
 
@@ -70,10 +70,12 @@ async def test_create_hcp(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_get_hcp_by_id(client: AsyncClient, sample_hcp: HCP):
-    """GET /api/v1/hcp/{id} returns the HCP."""
+    """GET /api/v1/hcp/{id} returns the HCP with prescribing behaviours."""
     resp = await client.get(f"/api/v1/hcp/{sample_hcp.id}", headers=AUTH)
     assert resp.status_code == 200
-    assert resp.json()["id"] == str(sample_hcp.id)
+    body = resp.json()
+    assert body["id"] == str(sample_hcp.id)
+    assert "prescribing_behaviors" in body
 
 
 @pytest.mark.asyncio
@@ -120,13 +122,14 @@ async def test_get_prescribing(client: AsyncClient, sample_hcp: HCP, db_session)
 
 @pytest.mark.asyncio
 async def test_get_engagement(client: AsyncClient, sample_call: CallSession, sample_hcp: HCP):
-    """GET /api/v1/hcp/{id}/engagement returns call history."""
+    """GET /api/v1/hcp/{id}/engagement returns engagement timeline."""
     resp = await client.get(f"/api/v1/hcp/{sample_hcp.id}/engagement", headers=AUTH)
     assert resp.status_code == 200
     body = resp.json()
     assert isinstance(body, list)
     assert len(body) >= 1
-    assert body[0]["call_id"] == str(sample_call.id)
+    assert "event_type" in body[0]
+    assert "channel" in body[0]
 
 
 @pytest.mark.asyncio
@@ -138,7 +141,7 @@ async def test_bulk_import(client: AsyncClient):
         headers=AUTH,
         files={"file": ("hcps.csv", io.BytesIO(csv_content), "text/csv")},
     )
-    assert resp.status_code == 201
+    assert resp.status_code == 202
     body = resp.json()
     assert "message" in body
     assert "s3_key" in body
