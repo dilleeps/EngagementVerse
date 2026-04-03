@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://ev_admin:EvDbPass2026Secure@ev-postgres.c4jkok8wwflz.us-east-1.rds.amazonaws.com:5432/ev_db"
 
     # --- Redis ---
-    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_URL: str = "redis://ev-redis.roqmrh.0001.use1.cache.amazonaws.com:6379/0"
 
     # --- AWS General ---
     AWS_ENDPOINT_URL: Optional[str] = None
