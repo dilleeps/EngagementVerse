@@ -51,9 +51,9 @@ async def _process_message(message_body: dict) -> None:
 async def poll_loop() -> None:
     """Continuously poll SQS for CRM-sync messages."""
     settings = get_settings()
-    sqs_url = settings.SQS_URL_CRM_SYNC
+    sqs_url = settings.SQS_CRM_SYNC_URL
     if not sqs_url:
-        logger.warning("SQS_URL_CRM_SYNC not configured; crm_sync worker idle")
+        logger.warning("SQS_CRM_SYNC_URL not configured; crm_sync worker idle")
         return
 
     sqs = boto3.client(

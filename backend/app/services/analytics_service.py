@@ -230,7 +230,7 @@ async def export_csv(db: AsyncSession, settings: Settings) -> ExportResponse:
         endpoint_url=settings.AWS_ENDPOINT_URL or None,
     )
     s3.put_object(
-        Bucket=settings.S3_BUCKET_EXPORTS,
+        Bucket=settings.S3_EXPORTS_BUCKET,
         Key=key,
         Body=csv_bytes,
         ContentType="text/csv",
@@ -238,7 +238,7 @@ async def export_csv(db: AsyncSession, settings: Settings) -> ExportResponse:
 
     url = s3.generate_presigned_url(
         "get_object",
-        Params={"Bucket": settings.S3_BUCKET_EXPORTS, "Key": key},
+        Params={"Bucket": settings.S3_EXPORTS_BUCKET, "Key": key},
         ExpiresIn=3600,
     )
     return ExportResponse(url=url)

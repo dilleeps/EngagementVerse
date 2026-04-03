@@ -67,7 +67,7 @@ async def _process_message(message_body: dict) -> None:
 async def poll_loop() -> None:
     """Continuously poll SQS for follow-up task messages."""
     settings = get_settings()
-    sqs_url = settings.SQS_URL_ANALYTICS  # reuse analytics queue or use a dedicated one
+    sqs_url = settings.SQS_FOLLOW_UP_URL
     if not sqs_url:
         logger.warning("Follow-up SQS queue not configured; follow_up worker idle")
         return
