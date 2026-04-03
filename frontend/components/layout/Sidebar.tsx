@@ -17,6 +17,7 @@ const navItems: NavItem[] = [
   { label: "HCP Profiles", href: "/hcp", icon: "\u{1F464}" },
   { label: "Campaigns", href: "/campaigns", icon: "\u{1F4E3}" },
   { label: "Leads", href: "/leads", icon: "\u{1F3AF}" },
+  { label: "Templates", href: "/templates", icon: "\u{1F4E7}" },
   { label: "Analytics", href: "/analytics", icon: "\u{1F4C8}" },
 ];
 

@@ -5,6 +5,7 @@ from app.models.hcp import HCP, PrescribingBehavior, KOLTier, Specialty, Channel
 from app.models.user import AppUser, UserRole
 from app.models.call import CallSession, Transcript, AIInsight, CallStatus, SpeakerType, InsightType
 from app.models.lead import Lead, LeadStatus, LeadSource
+from app.models.email_template import EmailTemplate, TemplateCategory
 from app.models.campaign import (
     Campaign,
     CampaignAudience,
@@ -40,4 +41,6 @@ __all__ = [
     "Lead",
     "LeadStatus",
     "LeadSource",
+    "EmailTemplate",
+    "TemplateCategory",
 ]

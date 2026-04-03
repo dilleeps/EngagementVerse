@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.api.v1 import analytics, auth, calls, campaigns, dashboard, hcp_profiles, leads
+from app.api.v1 import analytics, auth, calls, campaigns, dashboard, email_templates, hcp_profiles, leads
 
 api_v1_router = APIRouter()
 
@@ -15,3 +15,4 @@ api_v1_router.include_router(campaigns.router, prefix="/campaigns", tags=["campa
 api_v1_router.include_router(hcp_profiles.router, prefix="/hcp", tags=["hcp"])
 api_v1_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
 api_v1_router.include_router(leads.router, prefix="/leads", tags=["leads"])
+api_v1_router.include_router(email_templates.router, prefix="/email-templates", tags=["email-templates"])
