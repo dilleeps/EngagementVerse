@@ -28,16 +28,8 @@ export default function HCPListPage() {
       </div>
 
       <HCPSearchBar
-        value={params.q ?? ''}
-        onChange={(q: string) => setParams((prev) => ({ ...prev, q, page: 1 }))}
-        specialty={params.specialty}
-        onSpecialtyChange={(specialty: string | undefined) =>
-          setParams((prev) => ({ ...prev, specialty, page: 1 }))
-        }
-        kolTier={params.kolTier}
-        onKolTierChange={(kolTier: string | undefined) =>
-          setParams((prev) => ({ ...prev, kolTier, page: 1 }))
-        }
+        onSearch={(searchParams) => setParams((prev) => ({ ...prev, ...searchParams, page: 1 }))}
+        initialValues={{ q: params.q, specialty: params.specialty, kolTier: params.kolTier }}
       />
 
       {/* Loading state */}

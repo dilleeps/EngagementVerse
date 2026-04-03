@@ -121,7 +121,7 @@ export default function HCPProfilePage({
       <div className="flex-1 space-y-6">
         {prescribing && <PrescribingTable data={prescribing} />}
 
-        {engagement && <EngagementTimeline data={engagement} />}
+        {engagement && <EngagementTimeline events={engagement} />}
       </div>
     </div>
   );

@@ -95,8 +95,13 @@ export default function DashboardPage() {
           }
         />
         <ActivityFeed
-          insights={data.topInsights ?? []}
-          campaigns={data.upcomingCampaigns ?? []}
+          activities={(data.recentCalls ?? []).map((c) => ({
+            id: c.id,
+            type: 'call',
+            message: `Call ${c.status?.toLowerCase() ?? 'completed'}`,
+            timestamp: c.startedAt ?? c.createdAt,
+            hcp_name: c.hcp?.firstName ? `${c.hcp.firstName} ${c.hcp.lastName}` : 'Unknown HCP',
+          }))}
         />
       </div>
 

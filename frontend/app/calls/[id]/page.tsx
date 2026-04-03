@@ -107,14 +107,14 @@ export default function LiveCallPage() {
         <div className="w-72 shrink-0 space-y-4">
           <AIInsightsPanel insights={insights} />
 
-          <CRMSyncStatus callId={id} />
+          <CRMSyncStatus syncedAt={call.updatedAt ?? null} recordId={call.id ?? null} />
 
           {queueItems && queueItems.length > 0 && (
             <div>
               <h3 className="mb-2 text-sm font-semibold text-gray-700">
                 Up next
               </h3>
-              <CallQueue items={queueItems.slice(0, 3)} compact />
+              <CallQueue items={queueItems.slice(0, 3)} />
             </div>
           )}
         </div>
