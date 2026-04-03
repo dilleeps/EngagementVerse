@@ -5,7 +5,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 
 interface TopbarProps {
-  title: string;
+  title?: string;
   badge?: {
     label: string;
     variant: "live" | "completed" | "scheduled" | "active";

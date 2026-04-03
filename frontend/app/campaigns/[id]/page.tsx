@@ -3,7 +3,7 @@
 import { use } from 'react';
 import Link from 'next/link';
 import { useCampaign, useLaunchCampaign, usePauseCampaign } from '@/hooks/useCampaign';
-import Badge from '@/components/ui/Badge';
+import { Badge } from '@/components/ui/Badge';
 import { formatDate } from '@/lib/utils';
 
 export default function CampaignDetailPage({ params }: { params: Promise<{ id: string }> }) {

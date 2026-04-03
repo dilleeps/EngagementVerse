@@ -5,7 +5,7 @@ import { Topbar } from "@/components/layout/Topbar";
 
 interface AppShellProps {
   children: React.ReactNode;
-  title: string;
+  title?: string;
   badge?: {
     label: string;
     variant: "live" | "completed" | "scheduled" | "active";

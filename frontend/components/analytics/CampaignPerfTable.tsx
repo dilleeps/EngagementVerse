@@ -1,7 +1,7 @@
 'use client';
 
-import Sparkline from '@/components/ui/Sparkline';
-import ProgressBar from '@/components/ui/ProgressBar';
+import { Sparkline } from '@/components/ui/Sparkline';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 
 interface CampaignPerf {
   id: string;
@@ -17,7 +17,7 @@ interface CampaignPerfTableProps {
   campaigns: CampaignPerf[];
 }
 
-export default function CampaignPerfTable({ campaigns }: CampaignPerfTableProps) {
+export function CampaignPerfTable({ campaigns }: CampaignPerfTableProps) {
   return (
     <div className="rounded-lg border border-black/[0.08] bg-white p-4">
       <h3 className="mb-4 text-sm font-medium text-gray-700">Campaign performance</h3>
