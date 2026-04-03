@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-export interface TranscriptLine {
+interface TranscriptLine {
   id: string;
   speaker: "AI" | "HCP";
   text: string;
@@ -16,8 +16,8 @@ interface TranscriptPaneProps {
 }
 
 function formatTime(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleTimeString("en-US", {
+  const date = new Date(iso);
+  return date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -26,58 +26,52 @@ function formatTime(iso: string): string {
 }
 
 export function TranscriptPane({ lines, className }: TranscriptPaneProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [lines.length]);
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [lines]);
 
   return (
     <div
       className={cn(
-        "border border-black/[0.08] rounded-lg bg-white flex flex-col",
+        "border border-black/[0.08] rounded-lg bg-white p-4",
         className
       )}
     >
-      <div className="px-4 py-3 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-900">Transcript</h3>
-      </div>
-
-      <div className="flex-1 overflow-y-auto max-h-96 px-4 py-3 space-y-3">
-        {lines.map((line) => {
-          const isAI = line.speaker === "AI";
-
-          return (
-            <div key={line.id} className="flex gap-3">
-              <span
-                className={cn(
-                  "mt-0.5 shrink-0 inline-flex items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold uppercase",
-                  isAI
-                    ? "bg-brand-light text-brand"
-                    : "bg-gray-100 text-gray-600"
-                )}
-              >
-                {line.speaker}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm text-gray-800 leading-relaxed">
-                  {line.text}
-                </p>
-                <p className="mt-0.5 text-[11px] text-gray-400 tabular-nums">
-                  {formatTime(line.timestamp)}
-                </p>
-              </div>
+      <h3 className="text-sm font-semibold text-gray-900 mb-3">Transcript</h3>
+      <div
+        ref={scrollRef}
+        className="max-h-96 overflow-y-auto space-y-3 pr-1"
+      >
+        {lines.map((line) => (
+          <div key={line.id} className="flex gap-3">
+            <span
+              className={cn(
+                "shrink-0 w-8 text-xs font-bold mt-0.5",
+                line.speaker === "AI" ? "text-brand" : "text-gray-400"
+              )}
+            >
+              {line.speaker}
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-800 leading-relaxed">
+                {line.text}
+              </p>
+              <p className="text-[10px] text-gray-400 mt-0.5">
+                {formatTime(line.timestamp)}
+              </p>
             </div>
-          );
-        })}
-
+          </div>
+        ))}
         {lines.length === 0 && (
-          <p className="py-8 text-center text-sm text-gray-400">
+          <p className="text-sm text-gray-400 text-center py-8">
             Waiting for transcript...
           </p>
         )}
-
-        <div ref={bottomRef} />
       </div>
     </div>
   );

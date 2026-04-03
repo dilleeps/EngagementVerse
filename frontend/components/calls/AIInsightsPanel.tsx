@@ -14,66 +14,70 @@ const insightBorderColor: Record<InsightType, string> = {
   NEXT_BEST_ACTION: "border-l-amber-500",
 };
 
-const insightBgColor: Record<InsightType, string> = {
-  UPSELL: "bg-blue-50",
-  FLAG_MLR: "bg-red-50",
-  ENGAGEMENT_SCORE: "bg-green-50",
-  SUGGEST_DATA: "bg-purple-50",
-  NEXT_BEST_ACTION: "bg-amber-50",
+const insightBadgeBg: Record<InsightType, string> = {
+  UPSELL: "bg-blue-100 text-blue-800",
+  FLAG_MLR: "bg-red-100 text-red-800",
+  ENGAGEMENT_SCORE: "bg-green-100 text-green-800",
+  SUGGEST_DATA: "bg-purple-100 text-purple-800",
+  NEXT_BEST_ACTION: "bg-amber-100 text-amber-800",
 };
 
-const insightTextColor: Record<InsightType, string> = {
-  UPSELL: "text-blue-700",
-  FLAG_MLR: "text-red-700",
-  ENGAGEMENT_SCORE: "text-green-700",
-  SUGGEST_DATA: "text-purple-700",
-  NEXT_BEST_ACTION: "text-amber-700",
-};
-
-function formatTypeLabel(type: InsightType): string {
-  return type.replace(/_/g, " ");
+function typeLabel(type: InsightType): string {
+  const labels: Record<InsightType, string> = {
+    UPSELL: "Upsell",
+    FLAG_MLR: "MLR Flag",
+    ENGAGEMENT_SCORE: "Engagement",
+    SUGGEST_DATA: "Data Suggestion",
+    NEXT_BEST_ACTION: "Next Best Action",
+  };
+  return labels[type];
 }
 
-export function AIInsightsPanel({ insights, className }: AIInsightsPanelProps) {
+export function AIInsightsPanel({
+  insights,
+  className,
+}: AIInsightsPanelProps) {
   return (
-    <div className={cn("space-y-3", className)}>
-      <h3 className="text-sm font-semibold text-gray-900">AI Insights</h3>
-
-      {insights.map((insight) => (
-        <div
-          key={insight.id}
-          className={cn(
-            "rounded-lg border border-black/[0.08] border-l-4 bg-white p-3",
-            insightBorderColor[insight.insightType]
-          )}
-        >
-          <div className="flex items-center justify-between mb-1.5">
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
-                insightBgColor[insight.insightType],
-                insightTextColor[insight.insightType]
-              )}
-            >
-              {formatTypeLabel(insight.insightType)}
-            </span>
-            <span className="text-xs text-gray-400 tabular-nums">
-              {Math.round(insight.confidence * 100)}%
-            </span>
-          </div>
-
-          <p className="text-sm font-medium text-gray-800">{insight.title}</p>
-          <p className="mt-0.5 text-sm text-gray-600 leading-relaxed">
-            {insight.description}
-          </p>
-        </div>
-      ))}
-
-      {insights.length === 0 && (
-        <div className="rounded-lg border border-dashed border-gray-200 py-8 text-center">
-          <p className="text-sm text-gray-400">No insights yet.</p>
-        </div>
+    <div
+      className={cn(
+        "border border-black/[0.08] rounded-lg bg-white p-4",
+        className
       )}
+    >
+      <h3 className="text-sm font-semibold text-gray-900 mb-4">AI insights</h3>
+      <div className="space-y-3">
+        {insights.map((insight) => (
+          <div
+            key={insight.id}
+            className={cn(
+              "rounded-md border border-black/[0.06] border-l-4 p-3",
+              insightBorderColor[insight.insightType]
+            )}
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <span
+                className={cn(
+                  "inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                  insightBadgeBg[insight.insightType]
+                )}
+              >
+                {typeLabel(insight.insightType)}
+              </span>
+              <span className="text-xs text-gray-500 tabular-nums">
+                {Math.round(insight.confidence * 100)}%
+              </span>
+            </div>
+            <p className="text-sm text-gray-800 leading-relaxed">
+              {insight.description}
+            </p>
+          </div>
+        ))}
+        {insights.length === 0 && (
+          <p className="text-sm text-gray-400 text-center py-6">
+            No insights yet
+          </p>
+        )}
+      </div>
     </div>
   );
 }

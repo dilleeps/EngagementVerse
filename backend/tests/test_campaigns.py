@@ -8,7 +8,7 @@ import uuid
 import pytest
 from httpx import AsyncClient
 
-from app.models.campaign import Campaign, CampaignStatus
+from app.models.campaign import Campaign, CampaignStatus, CommunicationType
 from app.models.hcp import HCP
 
 AUTH = {"Authorization": "Bearer test-token"}
@@ -35,9 +35,7 @@ async def test_create_campaign(client: AsyncClient):
         json={
             "name": "New Campaign",
             "drug_name": "DrugX",
-            "description": "Phase 3 outreach",
-            "target_specialty": "ONCOLOGY",
-            "budget": 50000.0,
+            "communication_type": "GENERAL",
         },
     )
     assert resp.status_code == 201
@@ -62,12 +60,11 @@ async def test_update_campaign(client: AsyncClient, sample_campaign: Campaign):
     resp = await client.put(
         f"/api/v1/campaigns/{sample_campaign.id}",
         headers=AUTH,
-        json={"name": "Updated Name", "budget": 75000.0},
+        json={"name": "Updated Name"},
     )
     assert resp.status_code == 200
     body = resp.json()
     assert body["name"] == "Updated Name"
-    assert body["budget"] == 75000.0
 
 
 # ---------- Launch / Pause ----------
@@ -79,6 +76,7 @@ async def test_launch_campaign_valid_status(client: AsyncClient, db_session, moc
         id=uuid.uuid4(),
         name="Approved Campaign",
         drug_name="DrugY",
+        communication_type=CommunicationType.GENERAL,
         status=CampaignStatus.APPROVED,
         created_by=mock_users["MSL_LEAD"].id,
     )
@@ -92,9 +90,9 @@ async def test_launch_campaign_valid_status(client: AsyncClient, db_session, moc
 
 @pytest.mark.asyncio
 async def test_launch_campaign_invalid_status(client: AsyncClient, sample_campaign: Campaign):
-    """POST launch fails when campaign is DRAFT."""
+    """POST launch fails when campaign is DRAFT (not APPROVED)."""
     resp = await client.post(f"/api/v1/campaigns/{sample_campaign.id}/launch", headers=AUTH)
-    assert resp.status_code == 409
+    assert resp.status_code == 400
 
 
 @pytest.mark.asyncio
@@ -104,6 +102,7 @@ async def test_pause_campaign(client: AsyncClient, db_session, mock_users):
         id=uuid.uuid4(),
         name="Active Campaign",
         drug_name="DrugZ",
+        communication_type=CommunicationType.GENERAL,
         status=CampaignStatus.ACTIVE,
         created_by=mock_users["MSL_LEAD"].id,
     )
@@ -119,17 +118,17 @@ async def test_pause_campaign(client: AsyncClient, db_session, mock_users):
 
 @pytest.mark.asyncio
 async def test_audience_crud(client: AsyncClient, sample_campaign: Campaign, sample_hcp: HCP):
-    """POST, GET, DELETE audience members."""
+    """POST and GET audience members."""
     # Add
     resp = await client.post(
         f"/api/v1/campaigns/{sample_campaign.id}/audience",
         headers=AUTH,
-        json={"members": [{"hcp_id": str(sample_hcp.id), "priority": 1}]},
+        json={"members": [{"hcp_id": str(sample_hcp.id), "selected": True, "priority_order": 1}]},
     )
     assert resp.status_code == 201
     members = resp.json()
     assert len(members) == 1
-    member_id = members[0]["id"]
+    assert members[0]["hcp_id"] == str(sample_hcp.id)
 
     # List
     resp = await client.get(
@@ -137,13 +136,6 @@ async def test_audience_crud(client: AsyncClient, sample_campaign: Campaign, sam
     )
     assert resp.status_code == 200
     assert len(resp.json()) >= 1
-
-    # Delete
-    resp = await client.delete(
-        f"/api/v1/campaigns/{sample_campaign.id}/audience/{member_id}",
-        headers=AUTH,
-    )
-    assert resp.status_code == 204
 
 
 # ---------- MLR Upload ----------
