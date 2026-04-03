@@ -2,20 +2,11 @@ version: 0.2
 
 env:
   variables:
-    IMAGE_REPO_NAME: engagement-verse/backend
+    IMAGE_REPO_NAME: engagement-verse/frontend
     IMAGE_TAG: latest
     AWS_DEFAULT_REGION: us-east-1
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.12
-    commands:
-      - echo "Installing Python dependencies..."
-      - pip install --upgrade pip
-      - pip install -r requirements.txt
-      - pip install pytest pytest-asyncio httpx aiosqlite
-
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
@@ -37,14 +28,10 @@ phases:
 
   post_build:
     commands:
-      - printf '[{"name":"ev-backend","imageUri":"%s"}]' ${FULL_IMAGE_URI} > imagedefinitions.json
+      - printf '[{"name":"ev-frontend","imageUri":"%s"}]' ${FULL_IMAGE_URI} > imagedefinitions.json
       - echo "Build completed on $(date)"
 
 artifacts:
   files:
     - imagedefinitions.json
   discard-paths: yes
-
-cache:
-  paths:
-    - '/root/.cache/pip/**/*'

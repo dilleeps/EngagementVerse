@@ -1,4 +1,4 @@
-import type { UserRole } from '@engagement-verse/shared';
+import type { UserRole } from '../../shared/types/index';
 
 // ─── Cookie helpers ──────────────────────────────────────────────────────────
 
@@ -28,9 +28,17 @@ export function getAccessToken(): string | null {
   return getCookie(ACCESS_TOKEN_KEY);
 }
 
+export function setAccessToken(token: string): void {
+  setCookie(ACCESS_TOKEN_KEY, token, 1);
+}
+
+export function setRefreshToken(token: string): void {
+  setCookie(REFRESH_TOKEN_KEY, token, 30);
+}
+
 export function setTokens(access: string, refresh: string): void {
-  setCookie(ACCESS_TOKEN_KEY, access, 1); // 1 day for access
-  setCookie(REFRESH_TOKEN_KEY, refresh, 30); // 30 days for refresh
+  setAccessToken(access);
+  setRefreshToken(refresh);
 }
 
 export function clearTokens(): void {
@@ -67,7 +75,6 @@ export function extractRole(token: string): UserRole | null {
   if (!payload) return null;
   const groups = payload['cognito:groups'];
   if (!groups || groups.length === 0) return null;
-  // Map Cognito group to UserRole
   const roleMap: Record<string, UserRole> = {
     MSL_LEAD: 'MSL_LEAD',
     COMMERCIAL_OPS: 'COMMERCIAL_OPS',
@@ -87,6 +94,5 @@ export function isAuthenticated(): boolean {
   if (!token) return false;
   const payload = decodeToken(token);
   if (!payload || !payload.exp) return false;
-  // Check if token is expired
   return payload.exp * 1000 > Date.now();
 }

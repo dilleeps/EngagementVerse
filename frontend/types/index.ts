@@ -101,3 +101,26 @@ export interface CampaignFilters {
   page?: number;
   size?: number;
 }
+
+/** Types used by useAuth hook. */
+export interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  role: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface AuthTokens {
+  access_token: string;
+  refresh_token: string;
+}
+
+/** Types used by useLiveCall hook. */
+export type TranscriptLine = TranscriptPayload;
+export type CallInsight = InsightPayload;
+export type Call = CallSession;
