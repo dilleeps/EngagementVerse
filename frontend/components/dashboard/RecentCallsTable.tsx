@@ -2,44 +2,38 @@ import Link from "next/link";
 import { cn, formatDuration, formatDate } from "@/lib/utils";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
-import type { CallSession, CallStatus } from "@/types";
 
 interface RecentCallsTableProps {
-  calls: CallSession[];
+  calls: any[];
   className?: string;
 }
 
-const statusToBadgeVariant: Record<
-  CallStatus,
-  "live" | "completed" | "escalated" | "scheduled" | "queued" | "opted_out"
-> = {
-  LIVE: "live",
-  COMPLETED: "completed",
-  ESCALATED: "escalated",
-  NO_ANSWER: "scheduled",
-  QUEUED: "queued",
-  OPTED_OUT: "opted_out",
-};
+function getBadgeVariant(status?: string): "live" | "completed" | "escalated" | "scheduled" | "queued" | "opted_out" | "draft" {
+  switch (status?.toUpperCase()) {
+    case 'LIVE': return 'live';
+    case 'COMPLETED': return 'completed';
+    case 'ESCALATED': return 'escalated';
+    case 'NO_ANSWER': return 'scheduled';
+    case 'QUEUED': return 'queued';
+    case 'OPTED_OUT': return 'opted_out';
+    default: return 'draft';
+  }
+}
 
-function statusLabel(status: CallStatus): string {
-  return status.charAt(0) + status.slice(1).toLowerCase().replace("_", " ");
+function statusLabel(status?: string): string {
+  if (!status) return 'Unknown';
+  return status.charAt(0) + status.slice(1).toLowerCase().replace(/_/g, ' ');
 }
 
 export function RecentCallsTable({ calls, className }: RecentCallsTableProps) {
   return (
-    <div
-      className={cn(
-        "border border-black/[0.08] rounded-lg bg-white p-4",
-        className
-      )}
-    >
+    <div className={cn("border border-black/[0.08] rounded-lg bg-white p-4", className)}>
       <h3 className="text-sm font-semibold text-gray-900 mb-4">Recent calls</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500">
               <th className="pb-3 pr-4">HCP</th>
-              <th className="pb-3 pr-4">Specialty</th>
               <th className="pb-3 pr-4">Status</th>
               <th className="pb-3 pr-4">Duration</th>
               <th className="pb-3 pr-4">Date</th>
@@ -47,57 +41,43 @@ export function RecentCallsTable({ calls, className }: RecentCallsTableProps) {
             </tr>
           </thead>
           <tbody>
-            {calls.map((call) => {
-              const hcpName = call.hcp
-                ? `${call.hcp.firstName} ${call.hcp.lastName}`
-                : call.hcpId;
-              const specialty = call.hcp?.specialty ?? "—";
+            {calls.map((call: any, idx: number) => {
+              const hcpName = call.hcp_name ?? call.hcpName ?? (call.hcp ? `${call.hcp.first_name ?? call.hcp.firstName ?? ''} ${call.hcp.last_name ?? call.hcp.lastName ?? ''}`.trim() : `Call ${idx + 1}`);
+              const duration = call.duration_seconds ?? call.durationSeconds ?? 0;
+              const date = call.started_at ?? call.startedAt ?? call.created_at ?? call.createdAt ?? '';
 
               return (
-                <tr
-                  key={call.id}
-                  className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
-                >
+                <tr key={call.id ?? idx} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
                   <td className="py-3 pr-4">
-                    <Link
-                      href={`/calls/${call.id}`}
-                      className="flex items-center gap-2.5"
-                    >
-                      <Avatar name={hcpName} size="sm" />
-                      <span className="font-medium text-gray-900">
-                        {hcpName}
-                      </span>
+                    <Link href={`/calls/${call.id ?? ''}`} className="flex items-center gap-2.5">
+                      <Avatar name={hcpName || 'HCP'} size="sm" />
+                      <span className="font-medium text-gray-900">{hcpName || 'Unknown'}</span>
                     </Link>
                   </td>
-                  <td className="py-3 pr-4 text-gray-600">
-                    {specialty === "—"
-                      ? specialty
-                      : specialty.charAt(0) + specialty.slice(1).toLowerCase()}
-                  </td>
                   <td className="py-3 pr-4">
-                    <Badge variant={statusToBadgeVariant[call.status]}>
+                    <Badge variant={getBadgeVariant(call.status)}>
                       {statusLabel(call.status)}
                     </Badge>
                   </td>
                   <td className="py-3 pr-4 text-gray-600 tabular-nums">
-                    {call.durationSeconds != null
-                      ? formatDuration(call.durationSeconds)
-                      : "—"}
+                    {duration > 0 ? formatDuration(duration) : '—'}
                   </td>
-                  <td className="py-3 pr-4 text-gray-600">
-                    {formatDate(call.createdAt)}
+                  <td className="py-3 pr-4 text-gray-500 text-xs">
+                    {date ? formatDate(date) : '—'}
                   </td>
                   <td className="py-3">
-                    <Link
-                      href={`/calls/${call.id}`}
-                      className="text-brand hover:text-brand-dark font-medium text-xs"
-                    >
+                    <Link href={`/calls/${call.id ?? ''}`} className="text-xs text-brand hover:text-brand-dark font-medium transition-colors">
                       View
                     </Link>
                   </td>
                 </tr>
               );
             })}
+            {calls.length === 0 && (
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-sm text-gray-400">No recent calls</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

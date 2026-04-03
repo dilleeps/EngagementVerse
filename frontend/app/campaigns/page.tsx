@@ -10,31 +10,21 @@ import type { CampaignFilters } from '@/types';
 const STATUS_OPTIONS = [
   { value: '', label: 'All statuses' },
   { value: 'DRAFT', label: 'Draft' },
-  { value: 'MLR_REVIEW', label: 'MLR review' },
+  { value: 'PENDING_MLR', label: 'MLR review' },
   { value: 'APPROVED', label: 'Approved' },
   { value: 'ACTIVE', label: 'Active' },
   { value: 'PAUSED', label: 'Paused' },
   { value: 'COMPLETED', label: 'Completed' },
 ];
 
-function campaignStatusVariant(
-  status: string,
-): 'default' | 'success' | 'warning' | 'error' | 'info' {
-  switch (status) {
-    case 'ACTIVE':
-      return 'success';
-    case 'PAUSED':
-      return 'warning';
-    case 'DRAFT':
-      return 'default';
-    case 'MLR_REVIEW':
-      return 'info';
-    case 'APPROVED':
-      return 'success';
-    case 'COMPLETED':
-      return 'default';
-    default:
-      return 'default';
+function statusToBadgeVariant(status?: string): "draft" | "approved" | "active" | "paused" | "completed" | "scheduled" | "live" | "queued" | "escalated" {
+  switch (status?.toUpperCase()) {
+    case 'ACTIVE': return 'active';
+    case 'PAUSED': return 'paused';
+    case 'APPROVED': return 'approved';
+    case 'COMPLETED': return 'completed';
+    case 'PENDING_MLR': return 'scheduled';
+    default: return 'draft';
   }
 }
 
@@ -48,13 +38,12 @@ export default function CampaignsPage() {
 
   const { data, isLoading } = useCampaigns(filters);
 
-  const campaigns = data?.items ?? [];
-  const total = data?.total ?? 0;
+  // Handle both array and paginated response
+  const campaigns: any[] = Array.isArray(data) ? data : (data?.items ?? []);
 
-  // Client-side drug name filter
   const filtered = drugSearch
-    ? campaigns.filter((c) =>
-        (c.drugName ?? c.name)
+    ? campaigns.filter((c: any) =>
+        (c.drug_name ?? c.drugName ?? c.name ?? '')
           .toLowerCase()
           .includes(drugSearch.toLowerCase()),
       )
@@ -72,7 +61,6 @@ export default function CampaignsPage() {
         </Link>
       </div>
 
-      {/* Filter bar */}
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-gray-500">Status</label>
@@ -96,9 +84,7 @@ export default function CampaignsPage() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-gray-500">
-            Drug name
-          </label>
+          <label className="text-xs font-medium text-gray-500">Drug name</label>
           <input
             type="text"
             value={drugSearch}
@@ -119,22 +105,17 @@ export default function CampaignsPage() {
         </button>
       </div>
 
-      {/* Loading */}
       {isLoading && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-40 animate-pulse rounded-lg border border-black/[0.08] bg-white"
-            />
+            <div key={i} className="h-40 animate-pulse rounded-lg border border-black/[0.08] bg-white" />
           ))}
         </div>
       )}
 
-      {/* Campaign cards */}
       {!isLoading && filtered.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((campaign) => (
+          {filtered.map((campaign: any) => (
             <Link
               key={campaign.id}
               href={`/campaigns/${campaign.id}`}
@@ -142,73 +123,39 @@ export default function CampaignsPage() {
             >
               <div className="flex items-start justify-between">
                 <h3 className="text-sm font-semibold text-gray-900 group-hover:text-brand transition-colors">
-                  {campaign.name}
+                  {campaign.name ?? 'Untitled'}
                 </h3>
-                <Badge variant={campaignStatusVariant(campaign.status)}>
-                  {campaign.status.replace('_', ' ')}
+                <Badge variant={statusToBadgeVariant(campaign.status)}>
+                  {(campaign.status ?? 'DRAFT').replace(/_/g, ' ')}
                 </Badge>
               </div>
 
-              {campaign.drugName && (
+              {(campaign.drug_name ?? campaign.drugName) && (
                 <p className="mt-1 text-xs text-gray-500">
-                  {campaign.drugName}
+                  {campaign.drug_name ?? campaign.drugName}
                 </p>
               )}
 
-              <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
-                {campaign.audienceSize != null && (
-                  <span>
-                    <span className="font-medium text-gray-700">
-                      {campaign.audienceSize.toLocaleString()}
-                    </span>{' '}
-                    HCPs
-                  </span>
-                )}
-                {campaign.scheduledAt && (
-                  <span>
-                    Scheduled{' '}
-                    {new Date(campaign.scheduledAt).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
+              {(campaign.communication_type ?? campaign.communicationType) && (
+                <p className="mt-2 text-xs text-gray-400">
+                  {(campaign.communication_type ?? campaign.communicationType ?? '').replace(/_/g, ' ')}
+                </p>
+              )}
 
-              {campaign.channels && campaign.channels.length > 0 && (
-                <div className="mt-3 flex gap-1.5">
-                  {campaign.channels.map((ch) => (
-                    <span
-                      key={ch}
-                      className="inline-flex rounded bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600"
-                    >
-                      {ch}
-                    </span>
-                  ))}
-                </div>
+              {campaign.scheduled_at && (
+                <p className="mt-2 text-xs text-gray-500">
+                  Scheduled {new Date(campaign.scheduled_at).toLocaleDateString()}
+                </p>
               )}
             </Link>
           ))}
         </div>
       )}
 
-      {/* Empty */}
       {!isLoading && filtered.length === 0 && (
         <EmptyState
           title="No campaigns found"
           description="Get started by creating your first campaign or adjust your filters."
-          icon={
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"
-              />
-            </svg>
-          }
         />
       )}
     </div>
