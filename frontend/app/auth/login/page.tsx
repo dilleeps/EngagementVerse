@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
@@ -85,9 +86,36 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400">
-          Powered by AI for biotech & pharma
-        </p>
+        {/* Demo credentials */}
+        <div className="rounded-lg bg-brand-light border border-brand/10 p-4">
+          <p className="text-xs font-medium text-brand-dark mb-2">Demo credentials</p>
+          <div className="space-y-1 text-xs text-gray-600">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Admin:</span>
+              <span className="font-mono">admin@engagementverse.com / TempPass123</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">MSL Lead:</span>
+              <span className="font-mono">msl@engagementverse.com / Demo1234</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Medical:</span>
+              <span className="font-mono">medical@engagementverse.com / Demo1234</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center space-y-3">
+          <p className="text-sm text-gray-500">
+            Don&apos;t have an account?{' '}
+            <Link href="/auth/register" className="font-medium text-brand hover:text-brand-dark transition-colors">
+              Create account
+            </Link>
+          </p>
+          <p className="text-xs text-gray-400">
+            Powered by BioverseAI - Bioverse Corp.
+          </p>
+        </div>
       </div>
     </div>
   );
