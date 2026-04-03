@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1: Build dependencies
 # ============================================================
-FROM python:3.12-slim AS builder
+FROM public.ecr.aws/docker/library/python:3.12-slim AS builder
 
 WORKDIR /build
 
@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 # ============================================================
 # Stage 2: Runtime image
 # ============================================================
-FROM python:3.12-slim AS runtime
+FROM public.ecr.aws/docker/library/python:3.12-slim AS runtime
 
 # Security: create non-root user
 RUN groupadd --gid 1000 appuser \
