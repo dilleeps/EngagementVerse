@@ -34,28 +34,29 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-
         <MetricGrid>
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
         </MetricGrid>
-
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <SkeletonBlock className="h-72" />
           <SkeletonBlock className="h-72" />
         </div>
-
         <SkeletonBlock className="h-64" />
       </div>
     );
   }
 
-  const hcpDelta =
-    data.totalHCPs > 0
-      ? ((data.callsThisWeek / data.totalHCPs) * 100 - 50) * 0.1
-      : 0;
+  // Safely access API fields with fallbacks
+  const hcpsReached = data.hcps_reached_week ?? data.totalHCPs ?? 0;
+  const completionRate = data.completion_rate ?? data.completionRate ?? 0;
+  const activeCalls = data.active_calls_count ?? data.callsToday ?? 0;
+  const mlrScore = data.mlr_compliance_score ?? data.avgEngagementScore ?? 0;
+  const callVolume = data.call_volume_7d ?? data.callsByDay ?? [];
+  const recentCalls = data.recent_calls ?? data.recentCalls ?? [];
+  const activityFeed = data.activity_feed ?? [];
 
   return (
     <div className="space-y-6">
@@ -64,48 +65,49 @@ export default function DashboardPage() {
       <MetricGrid>
         <MetricCard
           label="HCPs reached"
-          value={data.totalHCPs}
-          delta={hcpDelta}
+          value={hcpsReached}
+          delta={0}
         />
         <MetricCard
           label="Completion rate"
-          value={`${data.completionRate.toFixed(1)}%`}
-          delta={data.completionRate > 50 ? 3.2 : -1.5}
+          value={`${Number(completionRate).toFixed(1)}%`}
+          delta={completionRate > 50 ? 3.2 : 0}
         />
         <MetricCard
           label="Live calls"
-          value={data.callsToday}
-          delta={data.callsToday > 0 ? 5.0 : 0}
+          value={activeCalls}
+          delta={activeCalls > 0 ? 5.0 : 0}
         />
         <MetricCard
-          label="Avg engagement"
-          value={data.avgEngagementScore.toFixed(1)}
-          delta={data.avgEngagementScore > 50 ? 2.1 : -0.8}
-          suffix="/100"
+          label="MLR compliance"
+          value={`${Number(mlrScore).toFixed(1)}%`}
+          delta={mlrScore > 80 ? 2.1 : 0}
         />
       </MetricGrid>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <CallVolumeChart
-          data={
-            data.recentCalls?.map((c) => ({
-              date: c.startedAt ?? c.createdAt,
-              count: 1,
-            })) ?? []
-          }
-        />
+        <CallVolumeChart data={callVolume} />
         <ActivityFeed
-          activities={(data.recentCalls ?? []).map((c) => ({
-            id: c.id,
-            type: 'call',
-            message: `Call ${c.status?.toLowerCase() ?? 'completed'}`,
-            timestamp: c.startedAt ?? c.createdAt,
-            hcp_name: c.hcp?.firstName ? `${c.hcp.firstName} ${c.hcp.lastName}` : 'Unknown HCP',
-          }))}
+          activities={activityFeed.length > 0
+            ? activityFeed.map((item: any, i: number) => ({
+                id: String(i),
+                type: item.type ?? 'call',
+                message: item.message ?? 'Activity',
+                timestamp: item.timestamp ?? new Date().toISOString(),
+                hcp_name: item.hcp_name ?? '',
+              }))
+            : recentCalls.map((c: any, i: number) => ({
+                id: c.id ?? String(i),
+                type: 'call',
+                message: `Call ${c.status?.toLowerCase?.() ?? 'completed'}`,
+                timestamp: c.started_at ?? c.startedAt ?? c.created_at ?? c.createdAt ?? new Date().toISOString(),
+                hcp_name: '',
+              }))
+          }
         />
       </div>
 
-      <RecentCallsTable calls={data.recentCalls ?? []} />
+      <RecentCallsTable calls={recentCalls} />
     </div>
   );
 }
