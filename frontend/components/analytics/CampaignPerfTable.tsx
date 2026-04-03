@@ -2,19 +2,10 @@
 
 import { Sparkline } from '@/components/ui/Sparkline';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-
-interface CampaignPerf {
-  id: string;
-  name: string;
-  targeted: number;
-  reached: number;
-  completion_pct: number;
-  escalations: number;
-  sparkline: number[];
-}
+import type { CampaignPerformance } from '@/types';
 
 interface CampaignPerfTableProps {
-  campaigns: CampaignPerf[];
+  campaigns: CampaignPerformance[];
 }
 
 export function CampaignPerfTable({ campaigns }: CampaignPerfTableProps) {
@@ -27,29 +18,29 @@ export function CampaignPerfTable({ campaigns }: CampaignPerfTableProps) {
             <tr className="border-b border-gray-100 text-left text-xs font-medium text-gray-500">
               <th className="pb-3 pr-4">Campaign</th>
               <th className="pb-3 pr-4">Targeted</th>
-              <th className="pb-3 pr-4">Reached</th>
+              <th className="pb-3 pr-4">Completed</th>
               <th className="pb-3 pr-4 w-32">Completion</th>
-              <th className="pb-3 pr-4">Escalations</th>
+              <th className="pb-3 pr-4">Avg engagement</th>
               <th className="pb-3 w-28">7-day trend</th>
             </tr>
           </thead>
           <tbody>
             {campaigns.map((c) => (
-              <tr key={c.id} className="border-b border-gray-50 last:border-0">
-                <td className="py-3 pr-4 font-medium text-gray-900">{c.name}</td>
-                <td className="py-3 pr-4 text-gray-600">{c.targeted.toLocaleString()}</td>
-                <td className="py-3 pr-4 text-gray-600">{c.reached.toLocaleString()}</td>
+              <tr key={c.campaignId} className="border-b border-gray-50 last:border-0">
+                <td className="py-3 pr-4 font-medium text-gray-900">{c.campaignName}</td>
+                <td className="py-3 pr-4 text-gray-600">{c.totalContacts.toLocaleString()}</td>
+                <td className="py-3 pr-4 text-gray-600">{c.completedContacts.toLocaleString()}</td>
                 <td className="py-3 pr-4">
                   <div className="flex items-center gap-2">
-                    <ProgressBar value={c.completion_pct} />
+                    <ProgressBar value={c.completionRate * 100} />
                     <span className="text-xs text-gray-500 whitespace-nowrap">
-                      {c.completion_pct.toFixed(1)}%
+                      {(c.completionRate * 100).toFixed(1)}%
                     </span>
                   </div>
                 </td>
-                <td className="py-3 pr-4 text-gray-600">{c.escalations}</td>
+                <td className="py-3 pr-4 text-gray-600">{c.avgEngagement.toFixed(1)}</td>
                 <td className="py-3">
-                  <Sparkline data={c.sparkline} />
+                  <Sparkline data={c.dailyProgress.map(d => d.completed)} />
                 </td>
               </tr>
             ))}
