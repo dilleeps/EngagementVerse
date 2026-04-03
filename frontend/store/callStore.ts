@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Transcript, AIInsight } from '../../shared/types/index';
+import type { Transcript, AIInsight } from '@/types';
 
 interface CallStoreState {
   activeCallId: string | null;

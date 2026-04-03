@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AppUser } from '../../shared/types/index';
+import type { AppUser } from '@/types';
 import { clearTokens, isAuthenticated as checkAuth } from '@/lib/auth';
 
 interface AuthStoreState {
