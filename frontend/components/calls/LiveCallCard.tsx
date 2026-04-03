@@ -8,7 +8,7 @@ import type { CallSession } from "@/types";
 
 interface LiveCallCardProps {
   call: CallSession;
-  startedAt: string;
+  startedAt?: string;
   className?: string;
 }
 
@@ -32,7 +32,7 @@ export function LiveCallCard({
   const [elapsed, setElapsed] = useState<number>(() => {
     return Math.max(
       0,
-      Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)
+      Math.floor((Date.now() - new Date(startedAt ?? call.startedAt ?? Date.now()).getTime()) / 1000)
     );
   });
 
@@ -41,7 +41,7 @@ export function LiveCallCard({
       setElapsed(
         Math.max(
           0,
-          Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)
+          Math.floor((Date.now() - new Date(startedAt ?? call.startedAt ?? Date.now()).getTime()) / 1000)
         )
       );
     }, 1000);
