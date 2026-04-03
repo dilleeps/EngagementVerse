@@ -6,6 +6,7 @@ import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query, UploadFile, File
+from fastapi.responses import Response
 
 from app.infra.deps import get_current_user, get_db
 from app.models.lead import LeadSource, LeadStatus
@@ -91,7 +92,7 @@ async def update_lead(
     return LeadResponse.model_validate(lead)
 
 
-@router.delete("/{lead_id}", status_code=204)
+@router.delete("/{lead_id}", status_code=204, response_class=Response)
 async def delete_lead(
     lead_id: uuid.UUID,
     current_user: AppUser = Depends(get_current_user),

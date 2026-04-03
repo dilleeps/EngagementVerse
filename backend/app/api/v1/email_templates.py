@@ -6,6 +6,7 @@ import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infra.deps import get_current_user, get_db
@@ -89,7 +90,7 @@ async def update_template(
     return EmailTemplateResponse.model_validate(template)
 
 
-@router.delete("/{template_id}", status_code=204)
+@router.delete("/{template_id}", status_code=204, response_class=Response)
 async def delete_template(
     template_id: uuid.UUID,
     current_user: AppUser = Depends(get_current_user),
