@@ -3,9 +3,8 @@ import { get } from '@/lib/api';
 import type {
   AnalyticsSummary,
   OutcomeData,
-  ChannelMix,
+  ChannelMixData,
   CampaignPerformance,
-  ExportResult,
 } from '@/types';
 
 export function useAnalyticsSummary() {
@@ -16,32 +15,31 @@ export function useAnalyticsSummary() {
 }
 
 export function useOutcomes() {
-  return useQuery<OutcomeData>({
+  return useQuery<OutcomeData[]>({
     queryKey: ['analytics', 'outcomes'],
-    queryFn: () => get<OutcomeData>('/api/v1/analytics/outcomes'),
+    queryFn: () => get<OutcomeData[]>('/api/v1/analytics/outcomes'),
   });
 }
 
 export function useChannelMix() {
-  return useQuery<ChannelMix>({
+  return useQuery<ChannelMixData[]>({
     queryKey: ['analytics', 'channel-mix'],
-    queryFn: () => get<ChannelMix>('/api/v1/analytics/channel-mix'),
+    queryFn: () => get<ChannelMixData[]>('/api/v1/analytics/channel-mix'),
   });
 }
 
 export function useCampaignPerformance() {
-  return useQuery<CampaignPerformance>({
+  return useQuery<CampaignPerformance[]>({
     queryKey: ['analytics', 'campaigns'],
     queryFn: () =>
-      get<CampaignPerformance>('/api/v1/analytics/campaigns'),
+      get<CampaignPerformance[]>('/api/v1/analytics/campaigns'),
   });
 }
 
 export function useExportCSV() {
-  return useMutation<ExportResult, Error, void>({
-    mutationFn: () => get<ExportResult>('/api/v1/analytics/export'),
+  return useMutation<{ url: string }, Error, void>({
+    mutationFn: () => get<{ url: string }>('/api/v1/analytics/export'),
     onSuccess: (data) => {
-      // Open the presigned URL in a new tab to trigger download
       if (typeof window !== 'undefined') {
         window.open(data.url, '_blank');
       }
