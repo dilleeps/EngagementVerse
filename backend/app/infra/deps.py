@@ -53,11 +53,23 @@ async def get_current_user(
     token = credentials.credentials  # noqa: F841
 
     # --- DEV shortcut: skip real Cognito verification ---
-    if settings.ENVIRONMENT == "development" and not settings.COGNITO_USER_POOL_ID:
+    if settings.ENVIRONMENT == "development":
         result = await db.execute(select(AppUser).limit(1))
         user = result.scalar_one_or_none()
         if user is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No users in DB")
+            # Auto-create a dev user if none exists
+            from app.models.user import UserRole
+            import uuid
+            dev_user = AppUser(
+                id=uuid.uuid4(),
+                cognito_sub="dev-user",
+                email="admin@engagementverse.com",
+                full_name="Dev Admin",
+                role=UserRole.MSL_LEAD,
+            )
+            db.add(dev_user)
+            await db.flush()
+            return dev_user
         return user
 
     # --- Production path (Cognito JWT verification) ---

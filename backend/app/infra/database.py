@@ -29,6 +29,9 @@ def _get_session_factory():  # type: ignore[no-untyped-def]
     )
 
 
+engine = _get_engine()
+
+
 def get_engine():  # type: ignore[no-untyped-def]
     return _get_engine()
 

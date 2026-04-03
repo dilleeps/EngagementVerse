@@ -41,6 +41,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         encoding="utf-8",
         decode_responses=True,
     )
+
+    # Auto-create tables in development mode
+    if settings.ENVIRONMENT == "development":
+        from app.infra.database import engine
+        from app.models import Base
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables created/verified")
+
     yield
     # Shutdown
     if redis_pool is not None:
