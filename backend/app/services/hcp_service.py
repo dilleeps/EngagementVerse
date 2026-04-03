@@ -135,7 +135,7 @@ async def get_engagement_timeline(db: AsyncSession, hcp_id: uuid.UUID) -> list[E
 
 async def bulk_import_hcps(s3_key: str, settings: Settings) -> dict[str, Any]:
     """Enqueue a bulk-import job to SQS for background processing."""
-    sqs_url = settings.SQS_URL_CALL_EVENTS
+    sqs_url = settings.SQS_CALL_DISPATCH_URL
     if not sqs_url:
         return {"message": "Bulk import enqueued (stub)", "s3_key": s3_key}
 

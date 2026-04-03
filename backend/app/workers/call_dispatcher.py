@@ -73,9 +73,9 @@ async def _process_message(message_body: dict) -> None:
 async def poll_loop() -> None:
     """Continuously poll SQS for call-dispatch messages."""
     settings = get_settings()
-    sqs_url = settings.SQS_URL_CALL_EVENTS
+    sqs_url = settings.SQS_CALL_DISPATCH_URL
     if not sqs_url:
-        logger.warning("SQS_URL_CALL_EVENTS not configured; call_dispatcher idle")
+        logger.warning("SQS_CALL_DISPATCH_URL not configured; call_dispatcher idle")
         return
 
     sqs = boto3.client(
