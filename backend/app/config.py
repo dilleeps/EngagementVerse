@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     """Central configuration – values come from environment / .env file."""
 
     # --- Database ---
-    DATABASE_URL: str = "postgresql+asyncpg://ev_admin:EvDbPass2026Secure@localhost:5432/ev_db"
+    DATABASE_URL: str = "postgresql+asyncpg://ev_admin:EvDbPass2026Secure@ev-postgres.c4jkok8wwflz.us-east-1.rds.amazonaws.com:5432/ev_db"
 
     # --- Redis ---
     REDIS_URL: str = "redis://localhost:6379/0"
