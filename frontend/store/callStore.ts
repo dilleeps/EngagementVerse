@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Transcript, AIInsight } from '@engagement-verse/shared';
+import type { Transcript, AIInsight } from '../../shared/types/index';
 
 interface CallStoreState {
   activeCallId: string | null;
@@ -7,11 +7,11 @@ interface CallStoreState {
   insights: AIInsight[];
   callStartedAt: string | null;
 
-  // Actions
   setActiveCall: (callId: string, startedAt: string) => void;
   appendLine: (line: Transcript) => void;
   appendInsight: (insight: AIInsight) => void;
   clearCall: () => void;
+  reset: () => void;
 }
 
 export const useCallStore = create<CallStoreState>((set) => ({
@@ -39,6 +39,14 @@ export const useCallStore = create<CallStoreState>((set) => ({
     })),
 
   clearCall: () =>
+    set({
+      activeCallId: null,
+      transcriptLines: [],
+      insights: [],
+      callStartedAt: null,
+    }),
+
+  reset: () =>
     set({
       activeCallId: null,
       transcriptLines: [],
