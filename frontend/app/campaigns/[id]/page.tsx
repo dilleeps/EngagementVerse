@@ -31,7 +31,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold">{campaign.name}</h1>
-            <Badge status={campaign.status?.toLowerCase() ?? 'draft'} />
+            <Badge variant={(campaign.status?.toLowerCase() ?? 'draft') as any}>{campaign.status ?? 'Draft'}</Badge>
           </div>
           <p className="mt-1 text-sm text-gray-500">
             {campaign.drug_name} &middot; {campaign.communication_type?.replace(/_/g, ' ')}
@@ -106,7 +106,7 @@ export default function CampaignDetailPage({ params }: { params: Promise<{ id: s
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Status</span>
-                <Badge status={campaign.status?.toLowerCase() ?? 'draft'} />
+                <Badge variant={(campaign.status?.toLowerCase() ?? 'draft') as any}>{campaign.status ?? 'Draft'}</Badge>
               </div>
               {campaign.mlr_approved_at && (
                 <div className="flex justify-between">
